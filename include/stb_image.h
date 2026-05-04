@@ -7723,39 +7723,50 @@ static void *stbi__load_gif_main(stbi__context *s, int **delays, int *x, int *y,
         u = 0; // end of animated gif marker
 
       if (u) {
+        size_t alloc_size;
+        size_t delays_alloc;
         *x = g.w;
         *y = g.h;
         ++layers;
         stride = g.w * g.h * 4;
+        alloc_size = (size_t) layers * (size_t) stride;
+        if (alloc_size > (size_t) INT_MAX)
+          return stbi__load_gif_main_outofmem(&g, out, delays);
 
         if (out) {
           void *tmp =
-              (stbi_uc *)STBI_REALLOC_SIZED(out, out_size, layers * stride);
+              (stbi_uc *)STBI_REALLOC_SIZED(out, out_size, alloc_size);
           if (!tmp)
             return stbi__load_gif_main_outofmem(&g, out, delays);
           else {
             out = (stbi_uc *)tmp;
-            out_size = layers * stride;
+            out_size = (int) alloc_size;
           }
 
           if (delays) {
+            delays_alloc = (size_t) layers * sizeof(int);
+            if (delays_alloc > (size_t) INT_MAX)
+              return stbi__load_gif_main_outofmem(&g, out, delays);
             int *new_delays = (int *)STBI_REALLOC_SIZED(*delays, delays_size,
-                                                        sizeof(int) * layers);
+                                                        delays_alloc);
             if (!new_delays)
               return stbi__load_gif_main_outofmem(&g, out, delays);
             *delays = new_delays;
-            delays_size = layers * sizeof(int);
+            delays_size = (int) delays_alloc;
           }
         } else {
-          out = (stbi_uc *)stbi__malloc(layers * stride);
+          out = (stbi_uc *)stbi__malloc(alloc_size);
           if (!out)
             return stbi__load_gif_main_outofmem(&g, out, delays);
-          out_size = layers * stride;
+          out_size = (int) alloc_size;
           if (delays) {
-            *delays = (int *)stbi__malloc(layers * sizeof(int));
+            delays_alloc = (size_t) layers * sizeof(int);
+            if (delays_alloc > (size_t) INT_MAX)
+              return stbi__load_gif_main_outofmem(&g, out, delays);
+            *delays = (int *)stbi__malloc(delays_alloc);
             if (!*delays)
               return stbi__load_gif_main_outofmem(&g, out, delays);
-            delays_size = layers * sizeof(int);
+            delays_size = (int) delays_alloc;
           }
         }
         memcpy(out + ((layers - 1) * stride), u, stride);
