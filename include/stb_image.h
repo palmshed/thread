@@ -2084,8 +2084,8 @@ static stbi_uc *stbi__hdr_to_ldr(float *data, int x, int y, int comp) {
     n = comp - 1;
   for (i = 0; i < x * y; ++i) {
     for (k = 0; k < n; ++k) {
-      float z = (float)pow(data[i * comp + k] * stbi__h2l_scale_i,
-                           stbi__h2l_gamma_i) *
+      float z = (float)pow((double)data[i * comp + k] * (double)stbi__h2l_scale_i,
+                           (double)stbi__h2l_gamma_i) *
                     255 +
                 0.5f;
       if (z < 0)
