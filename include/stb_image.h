@@ -7747,7 +7747,7 @@ static void *stbi__load_gif_main(stbi__context *s, int **delays, int *x, int *y,
             delays_size = layers * sizeof(int);
           }
         } else {
-          out = (stbi_uc *)stbi__malloc(layers * stride);
+          out = (stbi_uc *)stbi__malloc((size_t)layers * (size_t)stride);
           if (!out)
             return stbi__load_gif_main_outofmem(&g, out, delays);
           out_size = layers * stride;
