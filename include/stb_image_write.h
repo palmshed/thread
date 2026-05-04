@@ -1288,7 +1288,7 @@ STBIWDEF unsigned char *stbi_write_png_to_mem(const unsigned char *pixels,
   filt = (unsigned char *)STBIW_MALLOC((x * n + 1) * y);
   if (!filt)
     return 0;
-  line_buffer = (signed char *)STBIW_MALLOC(x * n);
+  line_buffer = (signed char *)STBIW_MALLOC((size_t)x * (size_t)n);
   if (!line_buffer) {
     STBIW_FREE(filt);
     return 0;
