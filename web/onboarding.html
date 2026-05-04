@@ -73,6 +73,7 @@
                 <a href="api-design.html">API Design</a>
                 <a href="testing.html">Testing</a>
                 <a href="troubleshooting.html">Troubleshooting</a>
+                <a href="compatibility.html">Compatibility</a>
                 <button class="theme-toggle" onclick="toggleTheme()">◐</button>
             </div>
         </div>
@@ -80,8 +81,8 @@
 
     <main>
         <div class="container">
-            <h1>Onboarding & Compatibility</h1>
-            <p>Guide for contributors and users on architecture, workflow, and platform requirements.</p>
+            <h1>Onboarding</h1>
+            <p>Guide for contributors and users on architecture, workflow, and day-to-day development.</p>
 
             <h2>For New Contributors</h2>
 
@@ -125,38 +126,8 @@
             <pre>./scripts/setup.sh
 ./scripts/run.sh</pre>
 
-            <h2>Supported Platforms</h2>
-            <table>
-                <thead><tr><th>Platform</th><th>Architecture</th><th>GPU</th><th>Status</th></tr></thead>
-                <tbody>
-                    <tr><td>macOS 11.0+</td><td>x86_64, ARM64</td><td>Metal</td><td>Active</td></tr>
-                    <tr><td>Ubuntu 20.04+</td><td>x86_64</td><td>CUDA 11.8+</td><td>Active</td></tr>
-                    <tr><td>Windows 10+</td><td>x86_64</td><td>CUDA 11.8+</td><td>Active</td></tr>
-                </tbody>
-            </table>
-
-            <h2>Language Versions</h2>
-            <ul>
-                <li>C/C++: C17 / C++20</li>
-                <li>CUDA: 11.8+</li>
-                <li>Metal: macOS 11.0+</li>
-                <li>Python: 3.9+</li>
-            </ul>
-
-            <h2>Compatibility Guarantees</h2>
-            <p><strong>API Stability:</strong></p>
-            <ul>
-                <li>Major (X.0.0): Breaking changes allowed</li>
-                <li>Minor (x.Y.0): Backward-compatible features</li>
-                <li>Patch (x.y.Z): Bug fixes only</li>
-            </ul>
-
-            <h2>Support Timeline</h2>
-            <ul>
-                <li>Bug fixes: 2 years after initial release</li>
-                <li>Security updates: 3 years</li>
-                <li>Platform support: As long as vendor supports</li>
-            </ul>
+            <h2>Compatibility</h2>
+            <p>For supported platforms, toolchain versions, and dependency policy, see the dedicated <a href="compatibility.html">Compatibility</a> guide.</p>
         </div>
     </main>
 

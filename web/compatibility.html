@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Test Results - Hybrid Compute</title>
+    <title>Compatibility - Hybrid Compute</title>
     <style>
         :root {
             --text: #111;
@@ -24,7 +24,6 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
             font-size: 16px;
@@ -33,9 +32,7 @@
             background: var(--bg);
             transition: background-color 0.2s, color 0.2s;
         }
-
         .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
-
         nav { padding: 20px 0; border-bottom: 1px solid var(--border); }
         nav .container { display: flex; justify-content: space-between; align-items: center; }
         .nav-brand { font-weight: 600; font-size: 15px; text-decoration: none; color: var(--text); }
@@ -44,19 +41,17 @@
         .nav-links a:hover { color: var(--text); }
         .theme-toggle { background: none; border: none; cursor: pointer; padding: 4px; color: var(--text-muted); font-size: 16px; }
         .theme-toggle:hover { color: var(--text); }
-
         main { padding: 48px 0; }
         h1 { font-size: 28px; font-weight: 600; margin-bottom: 16px; }
         h2 { font-size: 20px; font-weight: 600; margin: 32px 0 16px; }
+        h3 { font-size: 16px; font-weight: 600; margin: 24px 0 12px; }
         p { color: var(--text-secondary); margin-bottom: 16px; }
-        pre { background: var(--pre-bg); padding: 16px; border-radius: 6px; font-size: 12px; font-family: 'SF Mono', Menlo, monospace; overflow-x: auto; line-height: 1.4; margin: 16px 0; }
         table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
         th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); }
         th { font-weight: 500; color: var(--text-muted); font-size: 12px; text-transform: uppercase; }
-
-        .meta { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
-        .pass { color: #22c55e; font-weight: 600; }
-
+        ul { color: var(--text-secondary); margin: 0 0 16px 24px; }
+        li { margin-bottom: 6px; }
+        code { background: var(--pre-bg); padding: 1px 4px; border-radius: 4px; }
         footer { padding: 32px 0; border-top: 1px solid var(--border); }
         footer .container { display: flex; justify-content: space-between; align-items: center; }
         footer p { font-size: 13px; color: var(--text-muted); margin: 0; display: flex; align-items: center; gap: 8px; }
@@ -71,73 +66,81 @@
             <a href="index.html" class="nav-brand">Hybrid Compute</a>
             <div class="nav-links">
                 <a href="api-design.html">API Design</a>
-                <a href="testing.html">Testing</a>
-                <a href="ci.html">CI/CD</a>
+                <a href="onboarding.html">Onboarding</a>
                 <a href="compatibility.html">Compatibility</a>
+                <a href="testing.html">Testing</a>
+                <a href="troubleshooting.html">Troubleshooting</a>
                 <button class="theme-toggle" onclick="toggleTheme()">◐</button>
             </div>
         </div>
     </nav>
-
     <main>
         <div class="container">
-            <h1>API Test Results</h1>
-            <p class="meta">Date: 2026-02-19 · API Version: v1 · Environment: Local development</p>
+            <h1>Compatibility</h1>
+            <p>Current platform, toolchain, and dependency support policy for Hybrid Compute.</p>
 
-            <h2>Test Summary</h2>
+            <h2>Language Versions</h2>
+            <ul>
+                <li>Python: 3.9+ (tested: 3.9, 3.10, 3.11, 3.12, 3.13, 3.14)</li>
+                <li>C++: 20 required</li>
+                <li>CUDA: 12.0+ optional (tested: 12.6.1, 13.0.1, 13.0.2, 13.1.0, 13.1.1)</li>
+                <li>Objective-C++: 17 for macOS Metal support</li>
+                <li>Metal: 3.0+ for macOS Metal acceleration</li>
+            </ul>
+
+            <h2>Build Tools</h2>
+            <ul>
+                <li>CMake: 3.10+ required, 3.21+ recommended for CUDA and Metal support</li>
+                <li>CUDA Toolkit: 12.0+ optional</li>
+                <li>Xcode: 14.0+ for macOS Metal development</li>
+                <li>Ninja: 1.10+ recommended</li>
+                <li>Make: 4.3+ supported</li>
+            </ul>
+
+            <h2>Core Dependencies</h2>
+            <ul>
+                <li>OpenCV: 4.0+ required, 4.5.0+ recommended, CUDA support optional</li>
+                <li>Eigen: 3.4.0+ required</li>
+                <li>GTest: 1.12.0+ for unit testing</li>
+                <li>pybind11: 2.10.0+ for Python bindings</li>
+                <li>NumPy: 1.21.0+ required for the Python interface</li>
+            </ul>
+
+            <h2>Supported Platforms</h2>
             <table>
-                <thead><tr><th>Test</th><th>Endpoint</th><th>Method</th><th>Status</th><th>Result</th></tr></thead>
+                <thead><tr><th>Platform</th><th>Architecture</th><th>GPU</th><th>Status</th></tr></thead>
                 <tbody>
-                    <tr><td>Health Check</td><td>/health</td><td>GET</td><td>200</td><td class="pass">PASS</td></tr>
-                    <tr><td>List Images (empty)</td><td>/v1/images</td><td>GET</td><td>200</td><td class="pass">PASS</td></tr>
-                    <tr><td>Upload Image</td><td>/v1/images</td><td>POST</td><td>201</td><td class="pass">PASS</td></tr>
+                    <tr><td>macOS 12.0+</td><td>x86_64, ARM64</td><td>Metal</td><td>Active</td></tr>
+                    <tr><td>Ubuntu 22.04+</td><td>x86_64</td><td>CUDA 12.0+</td><td>Active</td></tr>
+                    <tr><td>Windows 10+</td><td>x86_64</td><td>CUDA 12.0+</td><td>Active</td></tr>
                 </tbody>
             </table>
 
-            <h2>API Design Compliance</h2>
-            <table>
-                <thead><tr><th>Requirement</th><th>Implementation</th><th>Status</th></tr></thead>
-                <tbody>
-                    <tr><td>Plural resource names</td><td>/images, /tiles</td><td class="pass">PASS</td></tr>
-                    <tr><td>Nouns not verbs</td><td>GET/POST methods</td><td class="pass">PASS</td></tr>
-                    <tr><td>HAL format</td><td>_links, _embedded</td><td class="pass">PASS</td></tr>
-                    <tr><td>Pagination</td><td>offset, limit</td><td class="pass">PASS</td></tr>
-                    <tr><td>HTTP Status Codes</td><td>200, 201, etc.</td><td class="pass">PASS</td></tr>
-                    <tr><td>Error format</td><td>errors array</td><td class="pass">PASS</td></tr>
-                    <tr><td>Version in URI</td><td>/v1/ prefix</td><td class="pass">PASS</td></tr>
-                    <tr><td>RFC 3339 dates</td><td>ISO format with Z</td><td class="pass">PASS</td></tr>
-                </tbody>
-            </table>
+            <h2>Linux Details</h2>
+            <h3>Ubuntu</h3>
+            <ul>
+                <li>Ubuntu 22.04+ LTS tested on 22.04 and 24.04</li>
+                <li>GCC: 11.0+ or Clang: 14.0+</li>
+                <li><code>libtbb12</code> (TBB 2021.0+)</li>
+                <li>CUDA: 12.0+ for GPU support</li>
+                <li>OpenCV: 4.0+ with 4.5.0+ recommended</li>
+            </ul>
 
-            <h2>Sample Response</h2>
-            <pre>{
-  "_links": {
-    "self": { "href": "/v1/images?offset=0&limit=25" },
-    "next": { "href": "/v1/images?offset=25&limit=25" }
-  },
-  "_embedded": {
-    "images": [
-      {
-        "id": "abc123",
-        "filename": "image.jpg",
-        "size": 1024,
-        "created_at": "2026-02-19T10:00:00Z"
-      }
-    ]
-  },
-  "count": 1,
-  "total": 1
-}</pre>
+            <h3>Other Linux Distributions</h3>
+            <ul>
+                <li>GCC: 11.0+ or Clang: 14.0+</li>
+                <li><code>libtbb12</code> (TBB 2021.0+)</li>
+            </ul>
 
-            <h2>Conclusion</h2>
-            <p>All tests passed. The API implementation follows the API Design Guide specifications.</p>
-
-            <h2>Run the API</h2>
-            <pre>pip install flask werkzeug
-python api/server.py</pre>
+            <h2>Optional Dependencies</h2>
+            <ul>
+                <li>TensorRT: 8.5+ for TensorRT acceleration</li>
+                <li>ONNX Runtime: 1.13.0+ for ONNX model support</li>
+                <li>TensorFlow: 2.12.0+ optional</li>
+                <li>PyTorch: 2.0.0+ optional</li>
+            </ul>
         </div>
     </main>
-
     <footer>
         <div class="container">
             <p style="display: flex; align-items: center; gap: 8px;">
@@ -152,7 +155,6 @@ python api/server.py</pre>
             </div>
         </div>
     </footer>
-
     <script>
         function toggleTheme() {
             const html = document.documentElement;
