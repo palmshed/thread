@@ -7561,7 +7561,7 @@ static stbi_uc *stbi__gif_load_next(stbi__context *s, stbi__gif *g, int *comp,
     }
 
     // background is what out is after the undoing of the previou frame;
-    memcpy(g->background, g->out, 4 * g->w * g->h);
+    memcpy(g->background, g->out, (size_t)4 * (size_t)g->w * (size_t)g->h);
   }
 
   // clear my history;
