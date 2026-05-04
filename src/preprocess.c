@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -25,8 +26,21 @@ void splitImageIntoTiles(unsigned char *image, int width, int height,
     for (int x = 0; x < width; x += tile_size) {
       int tile_w = (x + tile_size > width) ? width - x : tile_size;
       int tile_h = (y + tile_size > height) ? height - y : tile_size;
-      unsigned char *tile_data =
-          (unsigned char *)malloc(tile_w * tile_h * channels);
+      if (tile_w <= 0 || tile_h <= 0 || channels <= 0) {
+        fprintf(stderr, "Invalid tile dimensions or channel count\n");
+        continue;
+      }
+      if ((size_t)tile_w > SIZE_MAX / (size_t)tile_h) {
+        fprintf(stderr, "Tile size overflow during allocation\n");
+        continue;
+      }
+      size_t tile_pixels = (size_t)tile_w * (size_t)tile_h;
+      if (tile_pixels > SIZE_MAX / (size_t)channels) {
+        fprintf(stderr, "Tile buffer overflow during allocation\n");
+        continue;
+      }
+      size_t tile_bytes = tile_pixels * (size_t)channels;
+      unsigned char *tile_data = (unsigned char *)malloc(tile_bytes);
       if (!tile_data) {
         fprintf(stderr, "Failed to allocate memory for tile\n");
         continue;
