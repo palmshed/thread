@@ -7566,7 +7566,7 @@ static stbi_uc *stbi__gif_load_next(stbi__context *s, stbi__gif *g, int *comp,
 
   // clear my history;
   memset(g->history, 0x00,
-         g->w * g->h); // pixels that were affected previous frame
+         (size_t) g->w * (size_t) g->h); // pixels that were affected previous frame
 
   for (;;) {
     int tag = stbi__get8(s);
