@@ -2,7 +2,7 @@
 # Copyright (c) 2026, bniladridas. All rights reserved.
 
 # Dockerfile for hybrid-compute (local CPU components)
-FROM ubuntu:24.04 AS builder
+FROM ubuntu:26.04 AS builder
 
 # Avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
@@ -33,7 +33,7 @@ RUN pip3 install --break-system-packages --no-cache-dir --ignore-installed -r re
 RUN mkdir build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DUSE_CUDA=OFF -DWITH_OPENCV=ON && make
 
 # Runtime stage
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=UTC
