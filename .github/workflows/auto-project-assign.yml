@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Add to Project
         if: github.event_name == 'pull_request' || github.event_name == 'issues'
-        uses: actions/add-to-project@v1.0.2
+        uses: actions/add-to-project@v2.0.0
         with:
           project-url: https://github.com/users/bniladridas/projects/14
           github-token: ${{ secrets.PAT_TOKEN }}
