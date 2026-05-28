@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hybrid Compute</title>
+    <title>Thread</title>
     <style>
         :root {
             --text: #111;
@@ -331,9 +331,9 @@
 <body>
     <nav>
         <div class="container">
-            <a href="index.html" class="nav-brand">Hybrid Compute</a>
+            <a href="index.html" class="nav-brand">Thread</a>
             <div class="nav-links">
-                <a href="https://github.com/bniladridas/hybrid-compute">GitHub</a>
+                <a href="https://github.com/bniladridas/thread">GitHub</a>
                 <a href="api-design.html">Docs</a>
                 <a href="compatibility.html">Compatibility</a>
                 <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">◐</button>
@@ -343,10 +343,10 @@
 
     <header>
         <div class="container">
-            <h1>Cross-platform GPU image processing</h1>
-            <p class="lead">Run CUDA-based image processing on macOS via Metal. Supports upscaling, filtering, morphology, edge detection, and blending. Split images locally, process on cloud GPU, stitch results.</p>
+            <h1>Thread</h1>
+            <p class="lead">A small image processing project. It splits images into tiles, upscales them, and stitches them back together. The CPU path works by default. GPU paths are optional.</p>
             <div class="links">
-                <a href="https://github.com/bniladridas/hybrid-compute">GitHub →</a>
+                <a href="https://github.com/bniladridas/thread">GitHub →</a>
                 <a href="api-design.html">Documentation →</a>
             </div>
         </div>
@@ -357,20 +357,20 @@
             <h2>What it does</h2>
             <div class="grid">
                 <div>
-                    <h3>CUDA-to-Metal translation</h3>
-                    <p>Write CUDA kernels that run on macOS Apple Silicon through automatic Metal translation.</p>
+                    <h3>Local first</h3>
+                    <p>Build and test the CPU path without CUDA or Metal.</p>
                 </div>
                 <div>
-                    <h3>Cross-platform builds</h3>
-                    <p>Same codebase compiles on macOS, Linux, and Windows with native GPU support on each.</p>
+                    <h3>GPU when ready</h3>
+                    <p>CUDA and Metal code live in the repo, but they are optional.</p>
                 </div>
                 <div>
-                    <h3>Local preprocessing</h3>
-                    <p>CPU-based tiling and stitching with OpenCV or header-only stb_image. No external dependencies required for C version.</p>
+                    <h3>Simple tools</h3>
+                    <p>The C preprocessor uses stb_image. The Python flow uses OpenCV.</p>
                 </div>
                 <div>
                     <h3>REST API</h3>
-                    <p>Upload images, create tiles, trigger upscaling, and download results via HTTP endpoints.</p>
+                    <p>Upload images, create tiles, upscale, stitch, and download results.</p>
                 </div>
             </div>
         </div>
@@ -388,7 +388,7 @@
                 <div class="step">
                     <p class="step-num">2</p>
                     <h3>Transfer</h3>
-                    <p>Send tiles to cloud GPU instance</p>
+                    <p>Send tiles to a GPU machine when needed</p>
                 </div>
                 <div class="step">
                     <p class="step-num">3</p>
@@ -406,44 +406,8 @@
 
     <section>
         <div class="container">
-            <h2>Performance</h2>
-            <p>Processing times for 1024×1024 images.</p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Operation</th>
-                        <th>macOS Metal</th>
-                        <th>Linux CUDA</th>
-                        <th>CPU</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>2× Upscale</td>
-                        <td class="highlight">12ms</td>
-                        <td>15ms</td>
-                        <td>450ms</td>
-                    </tr>
-                    <tr>
-                        <td>Gaussian Blur</td>
-                        <td class="highlight">8ms</td>
-                        <td>10ms</td>
-                        <td>180ms</td>
-                    </tr>
-                    <tr>
-                        <td>Edge Detection</td>
-                        <td class="highlight">5ms</td>
-                        <td>7ms</td>
-                        <td>120ms</td>
-                    </tr>
-                    <tr>
-                        <td>Color Conversion</td>
-                        <td class="highlight">3ms</td>
-                        <td>4ms</td>
-                        <td>45ms</td>
-                    </tr>
-                </tbody>
-            </table>
+            <h2>Status</h2>
+            <p>The local CPU path is the stable path. GPU work is kept separate so the app still runs on a plain machine.</p>
         </div>
     </section>
 
@@ -496,21 +460,20 @@
                 </div>
                 <div class="setup-card">
                     <h3>Docker</h3>
-                    <pre>docker build -t hybrid-compute .
-docker run --rm hybrid-compute</pre>
+                    <pre>docker build -t thread .
+docker run --rm thread</pre>
                 </div>
                 <div class="setup-card">
                     <h3>macOS</h3>
-                    <pre>brew install --cask miniforge
-mamba install opencv cmake
-mkdir build && cd build
-cmake .. && make</pre>
+                    <pre>brew install cmake ninja
+bash scripts/setup.sh
+cmake -S . -B build -DWITH_METAL=OFF</pre>
                 </div>
                 <div class="setup-card">
                     <h3>Ubuntu</h3>
-                    <pre>sudo apt install cmake libopencv-dev
-mkdir build && cd build
-cmake .. && make</pre>
+                    <pre>sudo apt install cmake ninja-build python3-venv
+bash scripts/setup.sh
+cmake -S . -B build -DUSE_CUDA=OFF</pre>
                 </div>
             </div>
         </div>
@@ -535,24 +498,22 @@ cmake .. && make</pre>
 
     <section>
         <div class="container">
-            <h2>Acknowledgments</h2>
-            <p>This project would not have been possible without OpenCode Zen and Kilo Gateway.</p>
-            <p style="margin-top: 20px; font-size: 14px;">This project is being acquired by libnudget, a startup building the future of hybrid compute infrastructure.</p>
-            <p style="margin-top: 16px;"><a href="https://github.com/bniladridas/hybrid-compute/discussions" style="color: var(--text);">Join the discussion →</a></p>
+            <h2>Notes</h2>
+            <p>Thread is still small. The goal is to keep the working path clear before adding more moving parts.</p>
+            <p style="margin-top: 16px;"><a href="https://github.com/bniladridas/thread/discussions" style="color: var(--text);">Join the discussion →</a></p>
         </div>
     </section>
 
     <footer>
         <div class="container">
             <p style="display: flex; align-items: center; gap: 8px;">
-                <img src="startup/avatar.png" alt="libnudget" style="width: 20px; height: 20px; border-radius: 4px;">
-                BSD 3-Clause License · <a href="https://github.com/libnudget" style="color: var(--text-muted); text-decoration: none;">libnudget</a>
+                BSD 3-Clause License
             </p>
             <div>
-                <a href="https://github.com/bniladridas/hybrid-compute/discussions">Discussions</a>
+                <a href="https://github.com/bniladridas/thread/discussions">Discussions</a>
                 <a href="privacy.html">Privacy</a>
                 <a href="terms.html">Terms</a>
-                <a href="https://github.com/bniladridas/hybrid-compute">GitHub</a>
+                <a href="https://github.com/bniladridas/thread">GitHub</a>
             </div>
         </div>
     </footer>

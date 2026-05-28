@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Who is this for? - Hybrid Compute</title>
+    <title>Who is this for? - Thread</title>
     <style>
         :root {
             --text: #111;
@@ -106,7 +106,7 @@
 <body>
     <nav>
         <div class="container">
-            <a href="index.html" class="nav-brand">Hybrid Compute</a>
+            <a href="index.html" class="nav-brand">Thread</a>
             <div class="nav-links">
                 <a href="index.html">Home</a>
                 <a href="api-design.html">Docs</a>
@@ -120,96 +120,68 @@
     <main>
         <div class="container">
             <h1>Who is this for?</h1>
-            <p>Hybrid Compute is built for developers working on GPU-accelerated image processing across platforms.</p>
+            <p>Thread is for people who need a local image pipeline first, with GPU work available when needed.</p>
 
-            <h2>Target Developers</h2>
+            <h2>People</h2>
             <div class="audience-grid">
                 <div class="audience-card">
-                    <h3>macOS / iOS Developers</h3>
-                    <p>Need CUDA-like GPU compute on Apple Silicon via the Metal compatibility shim.</p>
+                    <h3>App developers</h3>
+                    <p>Need upload, tile, upscale, stitch, and download in one small flow.</p>
                 </div>
                 <div class="audience-card">
-                    <h3>GPU / Graphics Engineers</h3>
-                    <p>Working with CUDA, Metal, or building cross-platform GPU compute solutions.</p>
+                    <h3>Image workers</h3>
+                    <p>Need simple tools for batches of images.</p>
                 </div>
                 <div class="audience-card">
-                    <h3>Image Processing Engineers</h3>
-                    <p>Computer vision, photo/video applications, medical imaging pipelines.</p>
+                    <h3>GPU developers</h3>
+                    <p>Need a place to keep CUDA and Metal paths next to the CPU path.</p>
                 </div>
                 <div class="audience-card">
-                    <h3>ML / AI Engineers</h3>
-                    <p>Need GPU-accelerated image preprocessing for machine learning workflows.</p>
-                </div>
-                <div class="audience-card">
-                    <h3>Cross-platform Developers</h3>
-                    <p>Building applications that run on macOS, Linux, and Windows.</p>
-                </div>
-                <div class="audience-card">
-                    <h3>DevOps Engineers</h3>
-                    <p>Hybrid cloud/local GPU processing workflows and CI/CD pipelines.</p>
-                </div>
-                <div class="audience-card">
-                    <h3>Game Developers</h3>
-                    <p>GPU texture processing, visual effects, real-time image manipulation.</p>
-                </div>
-                <div class="audience-card">
-                    <h3>Scientific Computing</h3>
-                    <p>Research image analysis, satellite imagery, microscopy data processing.</p>
+                    <h3>API users</h3>
+                    <p>Need the image flow behind HTTP endpoints.</p>
                 </div>
             </div>
 
             <h2>Use Cases</h2>
 
             <div class="use-case">
-                <h3>Photo Editing Apps</h3>
-                <p>Real-time filters, upscaling, and color adjustments with GPU acceleration.</p>
+                <h3>Photo tools</h3>
+                <p>Resize, upscale, and stitch images.</p>
             </div>
 
             <div class="use-case">
-                <h3>Medical Imaging</h3>
-                <p>Process large DICOM images, CT scans, and X-rays with local privacy.</p>
+                <h3>Large images</h3>
+                <p>Split work into smaller pieces.</p>
             </div>
 
             <div class="use-case">
-                <h3>Video Processing</h3>
-                <p>Frame-by-frame processing, batch upscaling, and format conversion.</p>
+                <h3>Batch work</h3>
+                <p>Run the same image step many times.</p>
             </div>
 
             <div class="use-case">
-                <h3>Satellite Imagery</h3>
-                <p>Large geospatial image processing with hybrid cloud/local workflows.</p>
+                <h3>GPU tests</h3>
+                <p>Keep CUDA and Metal work separate from the default CPU path.</p>
             </div>
 
-            <div class="use-case">
-                <h3>E-commerce</h3>
-                <p>Product image optimization, watermarking, and batch resizing.</p>
-            </div>
+            <h2>Why it exists</h2>
+            <p>The project keeps a working local path while GPU work grows around it.</p>
+            <p>The API is small on purpose.</p>
 
-            <div class="use-case">
-                <h3>Game Development</h3>
-                <p>Texture pipeline tools, asset processing, and real-time effects.</p>
-            </div>
-
-            <h2>Why Developers Choose Hybrid Compute</h2>
-            <p><strong>Cross-platform:</strong> Write CUDA once, run on macOS via Metal, Linux, and Windows.</p>
-            <p><strong>Hybrid workflow:</strong> Split processing between local CPU and cloud GPU.</p>
-            <p><strong>No lock-in:</strong> Open source, BSD licensed, use stb_image or OpenCV.</p>
-            <p><strong>REST API:</strong> Simple HTTP endpoints for integration into any stack.</p>
-
-            <p style="margin-top: 32px;"><a href="https://github.com/bniladridas/hybrid-compute/discussions" style="color: var(--text);">Join the discussion →</a></p>
+            <p style="margin-top: 32px;"><a href="https://github.com/bniladridas/thread/discussions" style="color: var(--text);">Join the discussion →</a></p>
         </div>
     </main>
 
     <footer>
         <div class="container">
             <p style="display: flex; align-items: center; gap: 8px;">
-                <img src="startup/avatar.png" alt="libnudget"> BSD 3-Clause License · <a href="https://github.com/libnudget" style="color: var(--text-muted); text-decoration: none;">libnudget</a>
+                BSD 3-Clause License
             </p>
             <div>
-                <a href="https://github.com/bniladridas/hybrid-compute/discussions">Discussions</a>
+                <a href="https://github.com/bniladridas/thread/discussions">Discussions</a>
                 <a href="privacy.html">Privacy</a>
                 <a href="terms.html">Terms</a>
-                <a href="https://github.com/bniladridas/hybrid-compute">GitHub</a>
+                <a href="https://github.com/bniladridas/thread">GitHub</a>
             </div>
         </div>
     </footer>

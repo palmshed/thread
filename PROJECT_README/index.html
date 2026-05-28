@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>PROJECT README - Hybrid Compute</title>
+    <title>PROJECT README - Thread</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
@@ -30,7 +30,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
-          <a href=".." class="icon icon-home"> Hybrid Compute
+          <a href=".." class="icon icon-home"> Thread
         </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
       <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
@@ -66,7 +66,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
       <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="..">Hybrid Compute</a>
+          <a href="..">Thread</a>
         
       </nav>
       <div class="wy-nav-content">
@@ -82,41 +82,23 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <div align="center">
-  <h1>🧸</h1>
-
-[![CircleCI](https://dl.circleci.com/status-badge/img/gh/bniladridas/hybrid-compute/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/bniladridas/hybrid-compute/tree/main)
-</div>
-
-<p><strong><code>Hybrid-compute</code></strong> is a cross-platform GPU-accelerated image processing framework with a CUDA-to-Metal compatibility shim. It enables CUDA-based operations on macOS (Apple Silicon) via Metal, supporting various image processing tasks including upscaling, filtering, color space conversion, morphology, thresholding, edge detection, and blending. Includes CPU preprocessing for tiling/stitching and utilities.</p>
-<p><strong>Features</strong></p>
-<ul>
-<li><strong>Cross-Platform GPU Support</strong>: CUDA-to-Metal shim for macOS, native CUDA on Linux/Windows, enabling GPU-accelerated image processing.</li>
-<li><strong>Image Processing Operations</strong>: Supports upscaling, filtering, color space conversion, morphology, thresholding, edge detection, blending, and more.</li>
-<li><strong>Local Preprocessing</strong>: CPU-based image tiling and stitching using OpenCV (C++) or stb_image (C) on macOS/Linux/Windows.</li>
-<li><strong>GPU Acceleration</strong>: Optimized Metal shaders on macOS and CUDA kernels on Linux/Windows for high-performance processing.</li>
-<li><strong>Comprehensive Testing</strong>: Includes unit tests, performance benchmarks, and end-to-end integration tests with parallel execution for faster CI/CD[^1].</li>
-<li><strong>CI/CD</strong>: Automated builds and tests across macOS, Linux, and Windows with Docker image publishing and security scanning.</li>
-<li><strong>Notes</strong>: Google Benchmark is enabled by default on macOS/Linux, but disabled on Windows due to linking issues (set in WindowsConfig.cmake). Modify ENABLE_BENCHMARK option in benchmark.cmake to adjust on other platforms. CI runs with parallel testing, non-interactive prompts, and containerized builds.</li>
-<li><strong>Development Documentation</strong>: Detailed setup, architecture, onboarding, and compatibility guides[^2][^3].</li>
-<li><strong>API Design Guide</strong>: REST API design standards and best practices[^5].</li>
-</ul>
+                <p>Thread is a small image processing project.</p>
+<p>It splits images into tiles, upscales them, and stitches them back together. The CPU path is the default path. CUDA and Metal are optional.</p>
+<p>The repo also has a small HTTP API for the same flow.</p>
 <p><strong>Workflow</strong></p>
-<ol>
-<li><strong>Split</strong>: Process input images locally to create tiles.</li>
-<li>Transfer and upscale tiles in the cloud.</li>
-<li>Stitch upscaled tiles into the final image.</li>
-</ol>
+<p>Split an image locally.</p>
+<p>Upscale the tiles.</p>
+<p>Stitch the output.</p>
 <p><strong>Prerequisites</strong></p>
 <ul>
 <li>macOS with Homebrew, Linux (Ubuntu) with apt, or Windows with Chocolatey</li>
 <li>CMake</li>
-<li>OpenCV (for C++ version) or stb_image (for C version)</li>
+<li>OpenCV is optional for native builds</li>
 <li>NumPy</li>
-<li>Python 3.9+ with pip</li>
+<li>Python 3.10+ with pip</li>
 <li>Cloud instance with NVIDIA GPU and CUDA toolkit (for GPU upscaling)</li>
 </ul>
-<p><em>Note: Conda is installed automatically on macOS via the setup script. The C version has no external dependencies beyond stb_image (header-only).</em></p>
+<p>The default local path uses CPU tools and Python packages.</p>
 <p><strong>Setup</strong></p>
 <p><strong>Quick Setup</strong>
 Run the setup script to install all dependencies:</p>
@@ -127,48 +109,32 @@ For containerized environments:</p>
 <ul>
 <li><strong>Local CPU components</strong>:
   <code>bash
-  docker build -t hybrid-compute .
-  docker run --rm hybrid-compute</code></li>
+  docker build -t thread .
+  docker run --rm thread</code></li>
 <li><strong>CUDA GPU components</strong> (requires NVIDIA GPU):
   <code>bash
-  docker build -f Dockerfile.cuda -t hybrid-compute-cuda .
-  docker run --rm --gpus all -v /path/to/tiles:/app/tiles hybrid-compute-cuda ./cloud_gpu/upscaler tiles/input_tile.jpg tiles/output_tile.jpg</code></li>
+  docker build -f Dockerfile.cuda -t thread-cuda .
+  docker run --rm --gpus all -v /path/to/tiles:/app/tiles thread-cuda ./cloud_gpu/upscaler tiles/input_tile.jpg tiles/output_tile.jpg</code></li>
 </ul>
 <p><strong>Manual Setup</strong></p>
 <p><strong>macOS</strong></p>
-<pre><code class="language-bash"># Install dependencies
-brew install --cask miniforge
-eval &quot;$(&quot;$(brew --prefix)/Caskroom/miniforge/base/bin/conda&quot; shell.bash hook)&quot;
-conda init bash
-mamba install -c conda-forge opencv cmake imagemagick -y
-# Install Python dependencies
-pip install -r requirements.txt --user
-# Test cv2 import
-python3 -c &quot;import cv2; print('cv2 works:', cv2.__version__)&quot;
-# Build local tools
-mkdir build &amp;&amp; cd build
-cmake ..
-make -j$(sysctl -n hw.logicalcpu)
+<pre><code class="language-bash">brew install cmake ninja
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 </code></pre>
 <p><strong>Ubuntu</strong></p>
 <pre><code class="language-bash">sudo apt-get update
-sudo apt-get install -y cmake libopencv-dev build-essential imagemagick wget
-# Install CUDA (optional)
-wget -q https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb -O /tmp/cuda-keyring.deb
-sudo dpkg -i /tmp/cuda-keyring.deb
-sudo apt-get update
-sudo apt-get install -y cuda-toolkit-11-8 || echo &quot;CUDA installation skipped&quot;
+sudo apt-get install -y build-essential cmake ninja-build git python3 python3-pip python3-venv
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 </code></pre>
 <p><strong>Windows</strong></p>
-<pre><code class="language-bash"># Install dependencies
-choco install cmake opencv imagemagick -y
-# Install Python dependencies
-pip install -r requirements.txt --user
-# Build local tools
-mkdir build &amp;&amp; cd build
-cmake ..
-cmake --build . --config Release
+<pre><code class="language-bash">choco install -y cmake ninja python3 git
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r requirements.txt
 </code></pre>
 <p><strong>Cloud GPU</strong></p>
 <pre><code class="language-bash"># On cloud instance with CUDA
@@ -205,7 +171,7 @@ python3 scripts/e2e.py
    # Set your cloud configuration
    export CLOUD_IP="your.cloud.ip"
    export CLOUD_USER="ubuntu"
-   export CLOUD_PROJECT_PATH="/home/ubuntu/HybridCompute"
+   export CLOUD_PROJECT_PATH="/home/ubuntu/Thread"
    ./scripts/transfer_tiles.sh</code></li>
 <li><strong>Upscale tiles on cloud</strong>:
    ```bash

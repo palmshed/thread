@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pipeline Status - Hybrid Compute</title>
+    <title>Pipeline Status - Thread</title>
     <style>
         :root {
             --text: #111;
@@ -51,45 +51,6 @@
         h3 { font-size: 16px; font-weight: 600; margin: 24px 0 12px; }
         p { color: var(--text-secondary); margin-bottom: 16px; }
 
-        .badge-section {
-            background: var(--pre-bg);
-            border-radius: 8px;
-            padding: 24px;
-            margin: 24px 0;
-        }
-
-        .badge-row {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 16px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .badge-row:last-child {
-            border-bottom: none;
-        }
-
-        .badge-label {
-            min-width: 160px;
-            font-weight: 500;
-        }
-
-        .badge-row img {
-            height: 20px;
-        }
-
-        .badge-row a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 13px;
-            margin-left: auto;
-        }
-
-        .badge-row a:hover {
-            color: var(--text);
-        }
-
         .status-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -124,7 +85,7 @@
 <body>
     <nav>
         <div class="container">
-            <a href="index.html" class="nav-brand">Hybrid Compute</a>
+            <a href="index.html" class="nav-brand">Thread</a>
             <div class="nav-links">
                 <a href="ci.html">CI/CD</a>
                 <a href="testing.html">Testing</a>
@@ -137,84 +98,34 @@
 
     <main>
         <div class="container">
-            <h1>Pipeline Status</h1>
-            <p>Real-time status of CI/CD infrastructure for Hybrid Compute.</p>
+            <h1>Checks</h1>
+            <p>The repo keeps a small set of checks on by default. Other workflow files are manual.</p>
 
-            <h2>CircleCI</h2>
-            <div class="badge-section">
-                <div class="badge-row">
-                    <span class="badge-label">Build Status</span>
-                    <img src="https://dl.circleci.com/status-badge/img/gh/bniladridas/hybrid-compute/tree/main.svg?style=svg" alt="CircleCI">
-                    <a href="https://dl.circleci.com/status-badge/redirect/gh/bniladridas/hybrid-compute/tree/main">View →</a>
-                </div>
-                <div class="badge-row">
-                    <span class="badge-label">Project</span>
-                    <img src="https://circleci.com/gh/bniladridas/hybrid-compute.svg?style=shield" alt="CircleCI Shield">
-                    <a href="https://app.circleci.com/pipelines/github/bniladridas/hybrid-compute">Dashboard →</a>
-                </div>
-            </div>
+            <h2>Main Checks</h2>
+            <p><a href="https://github.com/bniladridas/thread/actions/workflows/ci.yml" style="color: var(--text);">CI runs</a></p>
+            <p><a href="https://github.com/bniladridas/thread/actions/workflows/pages.yml" style="color: var(--text);">Docs runs</a></p>
 
-            <h2>GitHub Actions</h2>
-            <div class="badge-section">
-                <div class="badge-row">
-                    <span class="badge-label">CI Workflow</span>
-                    <img src="https://github.com/bniladridas/hybrid-compute/actions/workflows/ci.yml/badge.svg" alt="CI">
-                    <a href="https://github.com/bniladridas/hybrid-compute/actions/workflows/ci.yml">Runs →</a>
-                </div>
-                <div class="badge-row">
-                    <span class="badge-label">Pages Deploy</span>
-                    <img src="https://github.com/bniladridas/hybrid-compute/actions/workflows/pages.yml/badge.svg" alt="Pages">
-                    <a href="https://github.com/bniladridas/hybrid-compute/actions/workflows/pages.yml">Runs →</a>
-                </div>
-                <div class="badge-row">
-                    <span class="badge-label">Release</span>
-                    <img src="https://github.com/bniladridas/hybrid-compute/actions/workflows/release.yml/badge.svg" alt="Release">
-                    <a href="https://github.com/bniladridas/hybrid-compute/actions/workflows/release.yml">Runs →</a>
-                </div>
-                <div class="badge-row">
-                    <span class="badge-label">CLA</span>
-                    <img src="https://github.com/bniladridas/hybrid-compute/actions/workflows/cla.yml/badge.svg" alt="CLA">
-                    <a href="https://github.com/bniladridas/hybrid-compute/actions/workflows/cla.yml">Runs →</a>
-                </div>
-                <div class="badge-row">
-                    <span class="badge-label">Labeler</span>
-                    <img src="https://github.com/bniladridas/hybrid-compute/actions/workflows/labeler.yml/badge.svg" alt="Labeler">
-                    <a href="https://github.com/bniladridas/hybrid-compute/actions/workflows/labeler.yml">Runs →</a>
-                </div>
-            </div>
-
-            <h2>Coverage & Quality</h2>
-            <div class="badge-section">
-                <div class="badge-row">
-                    <span class="badge-label">Code Coverage</span>
-                    <img src="https://codecov.io/gh/bniladridas/hybrid-compute/branch/main/graph/badge.svg" alt="Coverage">
-                    <a href="https://codecov.io/gh/bniladridas/hybrid-compute">Report →</a>
-                </div>
-            </div>
-
-            <h2>Quick Links</h2>
+            <h2>Links</h2>
             <div class="status-grid">
                 <div class="status-card">
-                    <h3>CircleCI Dashboard</h3>
-                    <p style="font-size: 14px; margin: 0;">View all pipelines and job history.</p>
-                    <a href="https://app.circleci.com/pipelines/github/bniladridas/hybrid-compute" style="display: inline-block; margin-top: 12px; font-size: 14px; color: var(--text-muted); text-decoration: none;">Open Dashboard →</a>
+                    <h3>Actions</h3>
+                    <p style="font-size: 14px; margin: 0;">Build and test runs.</p>
+                    <a href="https://github.com/bniladridas/thread/actions" style="display: inline-block; margin-top: 12px; font-size: 14px; color: var(--text-muted); text-decoration: none;">Open →</a>
                 </div>
                 <div class="status-card">
-                    <h3>GitHub Actions</h3>
-                    <p style="font-size: 14px; margin: 0;">View workflow runs and artifacts.</p>
-                    <a href="https://github.com/bniladridas/hybrid-compute/actions" style="display: inline-block; margin-top: 12px; font-size: 14px; color: var(--text-muted); text-decoration: none;">View Actions →</a>
+                    <h3>CircleCI</h3>
+                    <p style="font-size: 14px; margin: 0;">Kept for deeper platform jobs.</p>
+                    <a href="https://app.circleci.com/pipelines/github/bniladridas/thread" style="display: inline-block; margin-top: 12px; font-size: 14px; color: var(--text-muted); text-decoration: none;">Open →</a>
                 </div>
             </div>
 
-            <h2>Pipeline Health</h2>
-            <p>Both CircleCI and GitHub Actions run in parallel to ensure comprehensive coverage across all supported platforms.</p>
+            <h2>What Runs</h2>
+            <p>Pushes and pull requests run the main build and test checks. Release and docs workflows run only when their files change. Older helper workflows are manual.</p>
             <ul style="color: var(--text-secondary); margin-left: 24px;">
-                <li>macOS builds (Metal, CPU)</li>
-                <li>Linux builds (CUDA, CPU)</li>
-                <li>Windows builds (CPU)</li>
-                <li>Docker container builds</li>
-                <li>Security scanning</li>
-                <li>Documentation deployment</li>
+                <li>Build</li>
+                <li>Tests</li>
+                <li>Release checks</li>
+                <li>Docs deploy</li>
             </ul>
         </div>
     </main>
@@ -222,14 +133,13 @@
     <footer>
         <div class="container">
             <p style="display: flex; align-items: center; gap: 8px;">
-                <img src="startup/avatar.png" alt="libnudget" style="width: 20px; height: 20px; border-radius: 4px;">
-                BSD 3-Clause License · <a href="https://github.com/libnudget" style="color: var(--text-muted); text-decoration: none;">libnudget</a>
+                BSD 3-Clause License
             </p>
             <div>
-                <a href="https://github.com/bniladridas/hybrid-compute/discussions">Discussions</a>
+                <a href="https://github.com/bniladridas/thread/discussions">Discussions</a>
                 <a href="privacy.html">Privacy</a>
                 <a href="terms.html">Terms</a>
-                <a href="https://github.com/bniladridas/hybrid-compute">GitHub</a>
+                <a href="https://github.com/bniladridas/thread">GitHub</a>
             </div>
         </div>
     </footer>

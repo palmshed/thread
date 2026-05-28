@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>CI - Hybrid Compute</title>
+    <title>CI - Thread</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
@@ -30,7 +30,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
-          <a href=".." class="icon icon-home"> Hybrid Compute
+          <a href=".." class="icon icon-home"> Thread
         </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
       <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
@@ -58,9 +58,9 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#workflows">Workflows</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#main-ci-workflow">Main CI Workflow</a>
+    <li class="toctree-l3"><a class="reference internal" href="#ci">CI</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#nightly-workflow">Nightly Workflow</a>
+    <li class="toctree-l3"><a class="reference internal" href="#release-check">Release Check</a>
     </li>
         </ul>
     </li>
@@ -86,7 +86,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
       <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="..">Hybrid Compute</a>
+          <a href="..">Thread</a>
         
       </nav>
       <div class="wy-nav-content">
@@ -102,60 +102,37 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="cicd-pipeline">CI/CD Pipeline</h1>
-<p>This document describes the continuous integration and deployment (CI/CD) pipeline used for the Hybrid Compute project, powered by CircleCI.</p>
+                <h1 id="checks">Checks</h1>
+<p>This page explains the checks used by Thread.</p>
 <h2 id="overview">Overview</h2>
-<p>The pipeline automates testing, building, and deployment of the project across multiple platforms and architectures. It ensures code quality, runs comprehensive tests, and deploys documentation.</p>
+<p>The main checks build the code, run tests, and validate release files. Docs deploy when the static site changes. Other workflows are manual.</p>
 <h2 id="workflows">Workflows</h2>
-<h3 id="main-ci-workflow">Main CI Workflow</h3>
-<p>Triggered on pushes to the <code>main</code> branch (excluding nightly runs).</p>
-<ul>
-<li><strong>Code Quality</strong>: Lints code, runs pre-commit hooks, and performs static analysis with CodeQL.</li>
-<li><strong>Python Tests</strong>: Runs tests across multiple Python versions (3.9-3.12).</li>
-<li><strong>Build Linux CUDA</strong>: Builds and tests on Linux with CUDA support.</li>
-<li><strong>Build Linux CPU</strong>: Builds and tests on Linux CPU-only.</li>
-<li><strong>Build Windows</strong>: Builds on Windows with OpenCV.</li>
-<li><strong>Code Coverage</strong>: Generates and uploads coverage reports.</li>
-<li><strong>Benchmark</strong>: Runs performance benchmarks on macOS.</li>
-<li><strong>Docker Build</strong>: Builds and pushes Docker images for CPU and CUDA variants.</li>
-<li><strong>Security Scan</strong>: Scans Docker images for vulnerabilities.</li>
-</ul>
-<h3 id="nightly-workflow">Nightly Workflow</h3>
-<p>Runs daily at 2 AM UTC on the main branch.</p>
-<p>Includes all jobs from the main CI workflow for comprehensive nightly testing.</p>
+<h3 id="ci">CI</h3>
+<p>Runs on pushes and pull requests to <code>main</code>.</p>
+<p>It checks Python, C/C++ build paths, tests, and packaging.</p>
+<h3 id="release-check">Release Check</h3>
+<p>Runs when release files change. It keeps <code>VERSION</code>, Python metadata, and vcpkg metadata in sync.</p>
 <h2 id="supported-platforms">Supported Platforms</h2>
 <ul>
-<li><strong>Linux</strong>: CUDA and CPU builds with GCC/Clang</li>
-<li><strong>macOS</strong>: Metal builds with Xcode</li>
-<li><strong>Windows</strong>: CPU builds with MSVC</li>
-<li><strong>Docker</strong>: Multi-architecture images for CPU and GPU</li>
+<li><strong>Linux</strong>: CPU and CUDA paths</li>
+<li><strong>macOS</strong>: CPU and Metal paths</li>
+<li><strong>Windows</strong>: CPU path</li>
+<li><strong>Docker</strong>: CPU and CUDA images</li>
 </ul>
 <h2 id="key-features">Key Features</h2>
 <ul>
-<li><strong>Branch Filtering</strong>: CI runs only on the main branch to avoid unnecessary builds on documentation branches.</li>
-<li><strong>Caching</strong>: Build dependencies and artifacts are cached for faster subsequent runs.</li>
-<li><strong>Artifacts</strong>: Test results, build outputs, and coverage reports are stored.</li>
-<li><strong>Security</strong>: Automated vulnerability scanning of container images.</li>
-<li><strong>Documentation Deployment</strong>: MkDocs site is automatically deployed to GitHub Pages.</li>
+<li>CI runs only where it is useful.</li>
+<li>Manual workflows stay manual.</li>
+<li>Release checks fail on version drift.</li>
+<li>Docs deploy from <code>docs/web</code>.</li>
 </ul>
 <h2 id="configuration">Configuration</h2>
-<p>The pipeline is configured in <code>.circleci/config.yml</code> with the following key components:</p>
-<ul>
-<li><strong>Orbs</strong>: Reusable packages for Python, Docker, Node.js, AWS CLI, and Kubernetes.</li>
-<li><strong>Executors</strong>: Pre-configured environments for different platforms.</li>
-<li><strong>Commands</strong>: Reusable steps for dependency installation and building.</li>
-<li><strong>Jobs</strong>: Specific tasks like testing, building, and deployment.</li>
-<li><strong>Workflows</strong>: Orchestration of jobs with dependencies and triggers.</li>
-</ul>
+<p>GitHub Actions lives in <code>.github/workflows</code>.</p>
+<p>CircleCI lives in <code>.circleci/config.yml</code>.</p>
 <h2 id="getting-started">Getting Started</h2>
 <p>To run the pipeline locally or contribute changes:</p>
-<ol>
-<li>Ensure your branch is based on <code>main</code>.</li>
-<li>Push changes to trigger the CI pipeline.</li>
-<li>Monitor the CircleCI dashboard for build status.</li>
-<li>Address any failing checks before merging.</li>
-</ol>
-<p>For more details, see the <code>.circleci/config.yml</code> file in the repository.</p>
+<p>Push a branch and open a pull request.</p>
+<p>Fix failing checks before merging.</p>
               
             </div>
           </div><footer>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Testing - Hybrid Compute</title>
+    <title>Testing - Thread</title>
     <style>
         :root {
             --text: #111;
@@ -68,7 +68,7 @@
 <body>
     <nav>
         <div class="container">
-            <a href="index.html" class="nav-brand">Hybrid Compute</a>
+            <a href="index.html" class="nav-brand">Thread</a>
             <div class="nav-links">
                 <a href="api-design.html">API Design</a>
                 <a href="onboarding.html">Onboarding</a>
@@ -81,32 +81,22 @@
 
     <main>
         <div class="container">
-            <h1>Testing & Benchmarking</h1>
-            <p>Guide for running tests and benchmarks for the Metal shim implementation.</p>
+            <h1>Testing</h1>
+            <p>Run the local tests first. GPU tests are optional.</p>
 
             <h2>Prerequisites</h2>
             <ul>
                 <li>Xcode command line tools</li>
                 <li>CMake 3.10+</li>
                 <li>C++17 compatible compiler</li>
-                <li>Metal-capable macOS device</li>
+                <li>Python 3.10+</li>
             </ul>
 
             <h2>Code Quality</h2>
-            <p>Before running tests, ensure code quality standards are met:</p>
+            <p>Run the normal checks before opening a pull request:</p>
             <pre>pre-commit run --all-files</pre>
 
-            <h3>Quality Checks</h3>
-            <table>
-                <thead><tr><th>Check</th><th>GitHub Actions</th><th>CircleCI</th></tr></thead>
-                <tbody>
-                    <tr><td>Code Formatting</td><td>✓</td><td>✓</td></tr>
-                    <tr><td>Linting</td><td>✓</td><td>✓</td></tr>
-                    <tr><td>YAML Validation</td><td>✓</td><td>✓</td></tr>
-                    <tr><td>Security Analysis</td><td>✓</td><td>✓</td></tr>
-                    <tr><td>Container Scanning</td><td>✓</td><td>✓</td></tr>
-                </tbody>
-            </table>
+            <p>The main checks are lint, Python tests, native build, and CTest.</p>
 
             <h2>Running Tests</h2>
 
@@ -146,14 +136,13 @@ genhtml coverage.info --output-directory coverage</pre>
     <footer>
         <div class="container">
             <p style="display: flex; align-items: center; gap: 8px;">
-                <img src="startup/avatar.png" alt="libnudget" style="width: 20px; height: 20px; border-radius: 4px;">
-                BSD 3-Clause License · <a href="https://github.com/libnudget" style="color: var(--text-muted); text-decoration: none;">libnudget</a>
+                BSD 3-Clause License
             </p>
             <div>
-                <a href="https://github.com/bniladridas/hybrid-compute/discussions">Discussions</a>
+                <a href="https://github.com/bniladridas/thread/discussions">Discussions</a>
                 <a href="privacy.html">Privacy</a>
                 <a href="terms.html">Terms</a>
-                <a href="https://github.com/bniladridas/hybrid-compute">GitHub</a>
+                <a href="https://github.com/bniladridas/thread">GitHub</a>
             </div>
         </div>
     </footer>
