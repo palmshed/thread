@@ -20,7 +20,7 @@ jobs:
         run: |
           for label in "security:ff6b6b" "docs:74c9fd" "ci:4a9fe8" \
                        "config:ffd700" "tests:a8d5ff" "refactor:9b59b6" \
-                       "feature:28a745" "bug:e74c3c" "emergency:dc3545"; do
+                       "feature:28a745" "bug:e74c3c"; do
             IFS=':' read -r name color <<< "$label"
             gh label create "$name" --color "$color" --force 2>/dev/null || true
           done
@@ -32,13 +32,3 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           configuration-path: .github/labeler.yml
-
-      - name: Check for emergency keyword
-        if: >
-          contains(github.event.pull_request.title, '[emergency]') ||
-          contains(github.event.pull_request.title, '[urgent]') ||
-          contains(github.event.pull_request.title, '[critical]')
-        run: |
-          gh pr edit ${{ github.event.pull_request.number }} --add-label "emergency"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

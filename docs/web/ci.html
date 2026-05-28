@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CI/CD - Hybrid Compute</title>
+    <title>CI/CD - Thread</title>
     <style>
         :root {
             --text: #111;
@@ -68,7 +68,7 @@
 <body>
     <nav>
         <div class="container">
-            <a href="index.html" class="nav-brand">Hybrid Compute</a>
+            <a href="index.html" class="nav-brand">Thread</a>
             <div class="nav-links">
                 <a href="api-design.html">API Design</a>
                 <a href="testing.html">Testing</a>
@@ -81,68 +81,60 @@
 
     <main>
         <div class="container">
-            <h1>CI/CD Pipeline</h1>
-            <p>Continuous integration and deployment powered by CircleCI.</p>
+            <h1>Checks</h1>
+            <p>Thread keeps the default checks small.</p>
 
             <h2>Overview</h2>
-            <p>The pipeline automates testing, building, and deployment across multiple platforms. It ensures code quality, runs comprehensive tests, and deploys documentation.</p>
+            <p>The checks build the code, run tests, and guard release files. Other workflows are manual.</p>
 
             <h2>Workflows</h2>
 
             <div class="workflow">
-                <h3>Main CI Workflow</h3>
-                <p>Triggered on pushes to <code>main</code> branch.</p>
+                <h3>CI</h3>
+                <p>Runs on pushes and pull requests to <code>main</code>.</p>
                 <ul>
-                    <li>Code Quality: Linting, pre-commit hooks, CodeQL analysis</li>
-                    <li>Python Tests: Multiple versions (3.9-3.12)</li>
-                    <li>Build Linux CUDA: Build and test with CUDA support</li>
-                    <li>Build Linux CPU: CPU-only build and test</li>
-                    <li>Build Windows: Build with OpenCV</li>
-                    <li>Code Coverage: Generate and upload reports</li>
-                    <li>Benchmark: Run performance benchmarks on macOS</li>
-                    <li>Docker Build: Build and push CPU/CUDA images</li>
-                    <li>Security Scan: Scan images for vulnerabilities</li>
+                    <li>Lint</li>
+                    <li>Python tests</li>
+                    <li>Native build</li>
+                    <li>CTest</li>
+                    <li>Docker build</li>
                 </ul>
             </div>
 
             <div class="workflow">
-                <h3>Nightly Workflow</h3>
-                <p>Runs daily at 2 AM UTC. Includes all jobs from main CI for comprehensive testing.</p>
+                <h3>Manual Workflows</h3>
+                <p>Maintenance, CUDA release scans, project assignment, and helper flows run only when asked.</p>
             </div>
 
             <h2>Supported Platforms</h2>
             <ul>
-                <li><strong>Linux:</strong> CUDA and CPU builds with GCC/Clang</li>
-                <li><strong>macOS:</strong> Metal builds with Xcode</li>
-                <li><strong>Windows:</strong> CPU builds with MSVC</li>
-                <li><strong>Docker:</strong> Multi-architecture images for CPU and GPU</li>
+                <li><strong>Linux:</strong> CPU and CUDA paths</li>
+                <li><strong>macOS:</strong> CPU and Metal paths</li>
+                <li><strong>Windows:</strong> CPU path</li>
+                <li><strong>Docker:</strong> CPU and CUDA images</li>
             </ul>
 
             <h2>Key Features</h2>
             <ul>
-                <li>Branch filtering: CI runs only on main branch</li>
-                <li>Caching: Build dependencies cached for faster runs</li>
-                <li>Artifacts: Test results, builds, coverage stored</li>
-                <li>Security: Automated vulnerability scanning</li>
-                <li>Documentation: MkDocs deployed to GitHub Pages</li>
+                <li>Small default checks</li>
+                <li>Manual helper workflows</li>
+                <li>Release version validation</li>
+                <li>Static docs deploy</li>
             </ul>
 
             <h2>Configuration</h2>
-            <p>The pipeline is configured in <code>.circleci/config.yml</code>:</p>
+            <p>The checks live in these places:</p>
             <ul>
-                <li><strong>Orbs:</strong> Reusable packages for Python, Docker, Node.js, AWS</li>
-                <li><strong>Executors:</strong> Pre-configured environments per platform</li>
-                <li><strong>Commands:</strong> Reusable build steps</li>
-                <li><strong>Jobs:</strong> Testing, building, deployment tasks</li>
-                <li><strong>Workflows:</strong> Job orchestration with dependencies</li>
+                <li><code>.github/workflows</code></li>
+                <li><code>.circleci/config.yml</code></li>
+                <li><code>scripts/validate_release_config.sh</code></li>
             </ul>
 
             <h2>Getting Started</h2>
             <ol>
-                <li>Ensure your branch is based on <code>main</code></li>
-                <li>Push changes to trigger the CI pipeline</li>
-                <li>Monitor the CircleCI dashboard for build status</li>
-                <li>Address any failing checks before merging</li>
+                <li>Open a pull request</li>
+                <li>Read the failing check</li>
+                <li>Fix it before merging</li>
             </ol>
 
             <p style="margin-top: 24px;"><a href="pipeline.html" style="color: var(--text);">View Pipeline Status →</a></p>
@@ -152,14 +144,13 @@
     <footer>
         <div class="container">
             <p style="display: flex; align-items: center; gap: 8px;">
-                <img src="startup/avatar.png" alt="libnudget" style="width: 20px; height: 20px; border-radius: 4px;">
-                BSD 3-Clause License · <a href="https://github.com/libnudget" style="color: var(--text-muted); text-decoration: none;">libnudget</a>
+                BSD 3-Clause License
             </p>
             <div>
-                <a href="https://github.com/bniladridas/hybrid-compute/discussions">Discussions</a>
+                <a href="https://github.com/bniladridas/thread/discussions">Discussions</a>
                 <a href="privacy.html">Privacy</a>
                 <a href="terms.html">Terms</a>
-                <a href="https://github.com/bniladridas/hybrid-compute">GitHub</a>
+                <a href="https://github.com/bniladridas/thread">GitHub</a>
             </div>
         </div>
     </footer>

@@ -167,7 +167,7 @@ jobs:
       contents: read
     strategy:
       matrix:
-        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13', '3.14']
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -556,7 +556,7 @@ jobs:
                 - hello
           EOF
 
-      - name: Deploy to GitHub Pages
+      - name: Pages
         if: github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -600,9 +600,9 @@ jobs:
           REG="ghcr.io"
           OWNER="${{ github.repository_owner }}"
           if [ "${{ matrix.cuda-version }}" != "" ]; then
-            NAME="hybrid-compute-gpu"
+            NAME="thread-gpu"
           else
-            NAME="hybrid-compute-cpu"
+            NAME="thread-cpu"
           fi
           TAG_BASE="$REG/$OWNER/$NAME"
           echo "IMAGE_TAG1=$TAG_BASE:${{ github.sha }}" >> $GITHUB_ENV
@@ -628,7 +628,7 @@ jobs:
         run: |
           echo "IMAGE_TAG1=$IMAGE_TAG1"
           echo "IMAGE_TAG2=$IMAGE_TAG2"
-          docker images | grep hybrid-compute
+          docker images | grep thread
 
       - name: Test container execution
         if: github.event_name != 'pull_request'

@@ -1,16 +1,11 @@
 ---
-name: Smart Bot Health Check
+name: Workflow List
 
 on:
-  schedule:
-    - cron: '0 0 * * *'
   workflow_dispatch:
-  push:
-    paths:
-      - '.github/**'
 
 jobs:
-  smart-bot-check:
+  workflow-list:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -25,10 +20,10 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Smart Analysis
+      - name: Check files
         id: analysis
         run: |
-          echo "[INFO] Running smart bot analysis..."
+          echo "[INFO] Checking workflow files..."
           total=0; passed=0; failed=0
 
           # Check Dependabot
@@ -64,16 +59,15 @@ jobs:
           fi
           total=$((total + 1))
 
-          # Calculate health score
           health_score=$(( (passed * 100) / total ))
           echo "health_score=$health_score" >> $GITHUB_OUTPUT
           echo "passed=$passed" >> $GITHUB_OUTPUT
           echo "failed=$failed" >> $GITHUB_OUTPUT
           echo "total=$total" >> $GITHUB_OUTPUT
 
-          echo "[INFO] Health Score: $health_score% ($passed/$total)"
+          echo "[INFO] Score: $health_score% ($passed/$total)"
 
-      - name: E2E Testing
+      - name: Test hook
         run: |
           echo "[INFO] Running E2E tests..."
 
@@ -98,7 +92,7 @@ jobs:
 
           echo "[PASS] All E2E tests passed"
 
-      - name: Generate Report
+      - name: Report
         run: |
           health=${{ steps.analysis.outputs.health_score }}
           passed=${{ steps.analysis.outputs.passed }}
@@ -111,13 +105,13 @@ jobs:
           if [ $health -lt 50 ]; then status="CRITICAL"; fi
 
           cat >> $GITHUB_STEP_SUMMARY << EOF
-          ## Smart Bot Health Report
+          ## Workflow Report
 
           ### Overall Status: $status ($health%)
 
           | Metric | Value |
           |--------|-------|
-          | Health Score | $health% |
+          | Score | $health% |
           | Passed Checks | $passed/$total |
           | Failed Checks | $failed |
 
@@ -130,7 +124,7 @@ jobs:
           *Generated: $(date)*
           EOF
 
-      - name: Create Issue on Failure
+      - name: Open issue
         if: steps.analysis.outputs.health_score < 75
         uses: actions/github-script@v9
         with:
@@ -139,7 +133,7 @@ jobs:
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `Bot Health Alert: ${health}% health score`,
-              body: `Bot health check failed: ${health}% score. Check workflow run.`,
+              title: `Workflow check: ${health}% score`,
+              body: `Workflow check found a low score: ${health}%. Check the run.`,
               labels: ['automation', 'health-check']
             });

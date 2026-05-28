@@ -103,7 +103,7 @@ open coverage/index.html
 
 ## CI/CD Integration
 
-Tests are automatically run on pull requests and pushes to the main branch. The CI pipeline includes comprehensive quality checks:
+Tests run on pull requests and pushes to the main branch. The main checks are:
 
 ### CI Pipeline Components
 
@@ -113,7 +113,7 @@ Tests are automatically run on pull requests and pushes to the main branch. The 
 - Security vulnerability scanning
 - Performance benchmarking
 - Docker container builds and testing
-- Automated documentation generation
+- Documentation build
 
 ## Performance Profiling
 

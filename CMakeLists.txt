@@ -16,15 +16,15 @@ list(GET VERSION_LIST 0 PROJECT_VERSION)
 
 if(APPLE)
   project(
-    hybrid-compute
+    thread
     VERSION ${PROJECT_VERSION}
-    DESCRIPTION "Hybrid Compute - CUDA to Metal Shim"
+    DESCRIPTION "Thread - CUDA to Metal Shim"
     LANGUAGES CXX C OBJC OBJCXX)
 else()
   project(
-    hybrid-compute
+    thread
     VERSION ${PROJECT_VERSION}
-    DESCRIPTION "Hybrid Compute - CUDA to Metal Shim"
+    DESCRIPTION "Thread - CUDA to Metal Shim"
     LANGUAGES CXX C)
   # Disable ObjC compilers on non-Apple platforms
   set(CMAKE_OBJC_COMPILER NOTFOUND)
@@ -36,6 +36,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+option(WITH_METAL "Build Metal shim support on Apple platforms" ON)
 
 if(WIN32)
   include(WindowsConfig.cmake)
@@ -51,7 +52,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-if(APPLE)
+if(APPLE AND WITH_METAL)
   find_library(METAL_LIBRARY Metal REQUIRED)
   find_library(FOUNDATION_LIBRARY Foundation REQUIRED)
   find_library(METALKIT_LIBRARY MetalKit REQUIRED)
@@ -104,7 +105,7 @@ endif()
 # ARC is enabled per-target as needed
 
 # Find and link required frameworks
-if(APPLE)
+if(APPLE AND WITH_METAL)
   find_library(COCOA_LIBRARY Cocoa REQUIRED)
   find_library(METAL_LIBRARY Metal REQUIRED)
   find_library(FOUNDATION_LIBRARY Foundation REQUIRED)
@@ -213,7 +214,7 @@ else()
   message(STATUS "CUDA support disabled by user")
 endif()
 
-if(APPLE)
+if(APPLE AND WITH_METAL)
   # Enable Objective-C and Objective-C++ for Metal shim
   enable_language(OBJC)
   enable_language(OBJCXX)
@@ -277,7 +278,7 @@ if(APPLE)
   # Install the Metal library
   install(
     FILES ${METAL_LIBRARY_OUTPUT}
-    DESTINATION share/hybrid-compute/shaders
+    DESTINATION share/thread/shaders
     COMPONENT Runtime)
 
   # Add Metal include directory
@@ -413,7 +414,7 @@ if(APPLE)
   # Install the Metal shim library
   install(
     TARGETS cudart_shim
-    EXPORT hybrid-compute-targets
+    EXPORT thread-targets
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
     RUNTIME DESTINATION bin
@@ -428,20 +429,20 @@ if(APPLE)
 
   # Create a combined shim library that can be used as a drop-in replacement for
   # CUDA
-  add_library(hybrid_compute_shim INTERFACE)
-  target_link_libraries(hybrid_compute_shim INTERFACE cuda_shim)
+  add_library(thread_shim INTERFACE)
+  target_link_libraries(thread_shim INTERFACE cuda_shim)
 
   # Export targets for use in other projects
   install(
-    TARGETS cuda_shim hybrid_compute_shim
-    EXPORT hybrid-compute-targets
+    TARGETS cuda_shim thread_shim
+    EXPORT thread-targets
     INCLUDES
     DESTINATION include)
 
   # Export the Metal shim object library
   install(
     TARGETS metal_shim
-    EXPORT hybrid-compute-targets
+    EXPORT thread-targets
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
     RUNTIME DESTINATION bin
@@ -450,38 +451,38 @@ if(APPLE)
 
   # Export the targets file
   install(
-    EXPORT hybrid-compute-targets
-    FILE hybrid-compute-targets.cmake
-    NAMESPACE hybrid::
-    DESTINATION lib/cmake/hybrid-compute-${PROJECT_VERSION})
+    EXPORT thread-targets
+    FILE thread-targets.cmake
+    NAMESPACE thread::
+    DESTINATION lib/cmake/thread-${PROJECT_VERSION})
 
   # Create and install the config file
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/hybrid-compute-config.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/hybrid-compute-config.cmake @ONLY)
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/thread-config.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/thread-config.cmake @ONLY)
 
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/hybrid-compute-config.cmake
-          DESTINATION lib/cmake/hybrid-compute-${PROJECT_VERSION})
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/thread-config.cmake
+          DESTINATION lib/cmake/thread-${PROJECT_VERSION})
 
   # Create and install the version file
   include(CMakePackageConfigHelpers)
   write_basic_package_version_file(
-    ${CMAKE_CURRENT_BINARY_DIR}/hybrid-compute-config-version.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/thread-config-version.cmake
     VERSION ${PROJECT_VERSION}
     COMPATIBILITY SameMajorVersion)
 
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/hybrid-compute-config-version.cmake
-          DESTINATION lib/cmake/hybrid-compute-${PROJECT_VERSION})
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/thread-config-version.cmake
+          DESTINATION lib/cmake/thread-${PROJECT_VERSION})
 
   # Create a package configuration file for find_package
   export(
-    EXPORT hybrid-compute-targets
-    FILE ${CMAKE_CURRENT_BINARY_DIR}/hybrid-compute-targets.cmake
-    NAMESPACE hybrid::)
+    EXPORT thread-targets
+    FILE ${CMAKE_CURRENT_BINARY_DIR}/thread-targets.cmake
+    NAMESPACE thread::)
 
   # Install the version file
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/hybrid-compute-config-version.cmake
-          DESTINATION lib/cmake/hybrid-compute-${PROJECT_VERSION})
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/thread-config-version.cmake
+          DESTINATION lib/cmake/thread-${PROJECT_VERSION})
 
   # Create an uninstall target
   if(NOT TARGET uninstall)
@@ -496,7 +497,7 @@ if(APPLE)
       COMMENT "Uninstalling...")
   endif()
 
-  message(STATUS "Hybrid compute shim configured for Metal")
+  message(STATUS "Thread shim configured for Metal")
 endif()
 
 # Make OpenCV optional but enabled by default

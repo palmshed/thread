@@ -1,6 +1,6 @@
 # Development Setup Guide
 
-This guide provides instructions for setting up the development environment for the Hybrid Compute project.
+This guide provides instructions for setting up the development environment for the Thread project.
 
 ## Prerequisites
 
@@ -30,7 +30,7 @@ This guide provides instructions for setting up the development environment for 
 brew install cmake ninja
 
 # Install Python (if not already installed)
-brew install python@3.9
+brew install python@3.10
 ```
 
 ### 2. Configure Xcode
@@ -47,7 +47,7 @@ brew install python@3.9
 ```bash
 # Clone the repository (if not already cloned)
 git clone <repository-url>
-cd hybrid-compute
+cd thread
 
 # Create build directory and configure
 mkdir -p build && cd build
@@ -157,7 +157,7 @@ You can generate an Xcode project with:
 ```bash
 mkdir -p build-xcode && cd build-xcode
 cmake -G Xcode ..
-open HybridCompute.xcodeproj
+open Thread.xcodeproj
 ```
 
 ## Troubleshooting

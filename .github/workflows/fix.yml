@@ -1,12 +1,7 @@
 ---
-name: Fix Commit Messages
+name: Commit Message Fix
 
 on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
   workflow_dispatch:
     inputs:
       source_branch:

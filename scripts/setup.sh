@@ -1,13 +1,12 @@
 #!/bin/bash
 
-# Hybrid Compute Setup Script
-# Cross-platform dependency installation with colorized logs and error handling
+# Thread Setup Script
 
 set -euo pipefail
 
 # --- Constants ---
 VERSION=$(tr -d '[:space:]' < VERSION)
-MIN_PYTHON_VERSION="3.9"
+MIN_PYTHON_VERSION="3.10"
 MIN_CMAKE_VERSION="3.10"
 
 # --- Colors ---
@@ -37,7 +36,7 @@ version_compare() {
 }
 
 # --- Main Setup ---
-log_info "Starting Hybrid Compute Setup v$VERSION"
+log_info "Starting Thread Setup v$VERSION"
 
 # --- Platform Detection ---
 case "$(uname -s)" in
@@ -84,11 +83,8 @@ install_dependencies() {
 			exit 1
 		fi
 
-		# Install build tools
-		brew install cmake ninja llvm
-		brew link llvm --force
+		brew install cmake ninja
 
-		# Xcode command line tools
 		if ! xcode-select -p &>/dev/null; then
 			log_info "Installing Xcode Command Line Tools..."
 			xcode-select --install
@@ -96,26 +92,14 @@ install_dependencies() {
 			exit 0
 		fi
 
-		# Accept Xcode license
-		sudo xcodebuild -license accept
-
-		# Download Metal toolchain for GPU acceleration
-		xcodebuild -downloadComponent MetalToolchain
-
-		# Install miniforge if not present
-		if ! check_command mamba; then
-			log_info "Installing Miniforge..."
-			brew install --cask miniforge
-			eval "$(\"$(brew --prefix)/Caskroom/miniforge/base/bin/conda\" shell.bash hook)"
-			conda init
+		if [ "${WITH_METAL:-OFF}" = "ON" ]; then
+			sudo xcodebuild -license accept
+			xcodebuild -downloadComponent MetalToolchain
 		fi
 
-		# Install mamba packages
-		mamba install -c conda-forge -y \
-			opencv \
-			cmake \
-			imagemagick \
-			python="3.12"
+		if [ "${INSTALL_NATIVE_OPENCV:-false}" = true ]; then
+			brew install opencv
+		fi
 		;;
 
 	"linux")
@@ -133,7 +117,6 @@ install_dependencies() {
 		# Update package lists
 		sudo apt-get update -y
 
-		# Install base dependencies
 		sudo apt-get install -y --no-install-recommends \
 			build-essential \
 			cmake \
@@ -142,16 +125,19 @@ install_dependencies() {
 			git \
 			python3 \
 			python3-pip \
-			python3-venv \
-			libopencv-dev \
-			libtbb2 \
-			libtbb-dev \
-			libjpeg-dev \
-			libpng-dev \
-			libtiff-dev \
-			libavformat-dev \
-			libpq-dev \
-			imagemagick
+			python3-venv
+
+		if [ "${INSTALL_NATIVE_OPENCV:-false}" = true ]; then
+			sudo apt-get install -y --no-install-recommends \
+				libopencv-dev \
+				libtbb2 \
+				libtbb-dev \
+				libjpeg-dev \
+				libpng-dev \
+				libtiff-dev \
+				libavformat-dev \
+				libpq-dev
+		fi
 
 		# Install CUDA if requested
 		if [ "${INSTALL_CUDA:-false}" = true ]; then
@@ -172,22 +158,20 @@ install_dependencies() {
 			exit 1
 		fi
 
-		# Install build tools
 		choco install -y \
 			cmake \
 			ninja \
 			python3 \
-			git \
-			vcpkg
+			git
 
-		# Add vcpkg to PATH
-		VCPKG_ROOT="C:\\vcpkg"
-		export PATH="$VCPKG_ROOT:$PATH"
-
-		# Install vcpkg dependencies
-		vcpkg install \
-			opencv[core,contrib,jpeg,png,tiff,webp]:x64-windows \
-			tbb:x64-windows
+		if [ "${INSTALL_NATIVE_OPENCV:-false}" = true ]; then
+			choco install -y vcpkg
+			VCPKG_ROOT="C:\\vcpkg"
+			export PATH="$VCPKG_ROOT:$PATH"
+			vcpkg install \
+				opencv[core,contrib,jpeg,png,tiff,webp]:x64-windows \
+				tbb:x64-windows
+		fi
 		;;
 	esac
 }
@@ -197,7 +181,7 @@ setup_python() {
 	log_info "Setting up Python environment..."
 
 	# Check Python version
-		if ! python3 -c "import sys; exit(0 if sys.version_info >= (3, 9) else 1)"; then
+	if ! python3 -c "import sys; exit(0 if sys.version_info >= (3, 10) else 1)"; then
 		log_error "Python $MIN_PYTHON_VERSION or higher is required"
 		exit 1
 	fi
@@ -224,6 +208,7 @@ setup_python() {
 	pip install \
 		pytest \
 		pytest-cov \
+		ruff \
 		black \
 		mypy \
 		pylint \

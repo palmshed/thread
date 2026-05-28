@@ -1,7 +1,7 @@
 # Compatibility Matrix
 
 ## Language Versions
-- Python: 3.9+ (tested: 3.9, 3.10, 3.11, 3.12, 3.13, 3.14)
+- Python: 3.10+ (tested: 3.10, 3.11, 3.12, 3.13, 3.14)
 - C++: 20 required
 - CUDA: 12.0+ optional (tested: 12.6.1, 13.0.1, 13.0.2, 13.1.0, 13.1.1)
 - Objective-C++: 17 for macOS Metal support

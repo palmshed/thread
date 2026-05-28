@@ -1,36 +1,23 @@
 ---
-name: Lock Merged PRs
+name: Lock PR
 
 on:
-  pull_request:
-    types: [closed]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Merged pull request number to lock'
+        required: true
+        type: string
 
 jobs:
   lock:
-    if: github.event.pull_request.merged == true && github.repository_owner == 'bniladridas'
+    if: github.repository_owner == 'bniladridas'
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       contents: write
     steps:
       - name: Lock PR
-        run: gh pr lock ${{ github.event.pull_request.number }} --repo ${{ github.repository }}
+        run: gh pr lock "${{ inputs.pr_number }}" --repo "${{ github.repository }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Delete branch (skip if already deleted)
-        run: |
-          response=$(gh api \
-            -X DELETE \
-            "repos/${{ github.repository }}/git/refs/heads/$BRANCH_NAME" \
-            2>&1) || {
-            if echo "$response" | grep -q "Reference does not exist"; then
-              echo "Branch already deleted, skipping"
-            else
-              echo "Failed to delete branch: $response"
-              exit 1
-            fi
-          }
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH_NAME: ${{ github.event.pull_request.head.ref }}

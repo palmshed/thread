@@ -92,7 +92,7 @@ private:
   std::mutex m_mutex;
 
   MetalShim()
-      : m_serialQueue(dispatch_queue_create("com.hybridcompute.metalshim",
+      : m_serialQueue(dispatch_queue_create("com.thread.metalshim",
                                             DISPATCH_QUEUE_SERIAL)) {
     @autoreleasepool {
       // Create the Metal device

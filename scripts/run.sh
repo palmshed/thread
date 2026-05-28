@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Hybrid Compute Runner Script
+# Thread Runner Script
 
 set -e
 
@@ -13,24 +13,47 @@ RESET="\033[0m"
 
 echo -e "${BLUE}Building preprocess...${RESET}"
 
-# macOS conda activation
-if [[ "$OSTYPE" == "darwin"* ]]; then
-	export TZ=UTC
-	CONDA_PATH=$(find /usr/local /opt/homebrew -type f -name conda 2>/dev/null | head -n1)
-	if [[ -f "$CONDA_PATH" ]]; then
-		eval "$($CONDA_PATH shell.bash hook)"
-		conda activate base
-		echo -e "${GREEN}Conda activated.${RESET}"
-	else
-		echo -e "${RED}Conda not found. Please install miniconda.${RESET}"
+export TZ="${TZ:-UTC}"
+
+if [ -n "${PYTHON_BIN:-}" ]; then
+	PYTHON_CANDIDATES=("$PYTHON_BIN")
+else
+	PYTHON_CANDIDATES=("venv/bin/python" ".venv/bin/python" "python3")
+fi
+
+PYTHON_BIN=""
+for candidate in "${PYTHON_CANDIDATES[@]}"; do
+	if command -v "$candidate" >/dev/null 2>&1 && "$candidate" -c "import cv2, numpy" >/dev/null 2>&1; then
+		PYTHON_BIN="$candidate"
+		break
+	fi
+done
+
+if [ -z "$PYTHON_BIN" ]; then
+	echo -e "${RED}Could not find Python with cv2 and numpy installed. Run scripts/setup.sh first.${RESET}"
+	exit 1
+fi
+
+if [[ "$OSTYPE" == "darwin"* ]] && [ "${WITH_METAL:-OFF}" = "ON" ]; then
+	if ! xcrun -sdk macosx metal -v >/dev/null 2>&1; then
+		echo -e "${RED}Metal toolchain not available. Run scripts/setup.sh or set WITH_METAL=OFF.${RESET}"
 		exit 1
 	fi
 fi
 
+WITH_CUDA="${WITH_CUDA:-OFF}"
+WITH_OPENCV="${WITH_OPENCV:-OFF}"
+WITH_METAL="${WITH_METAL:-OFF}"
+ENABLE_BENCHMARK="${ENABLE_BENCHMARK:-OFF}"
+
 # --- Build ---
 mkdir -p build
 cd build
-cmake ..
+cmake .. \
+	-DUSE_CUDA="$WITH_CUDA" \
+	-DWITH_OPENCV="$WITH_OPENCV" \
+	-DWITH_METAL="$WITH_METAL" \
+	-DENABLE_BENCHMARK="$ENABLE_BENCHMARK"
 CPU_COUNT=1
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	CPU_COUNT=$(sysctl -n hw.logicalcpu)
@@ -47,14 +70,14 @@ cd ..
 
 # --- Test cv2 ---
 echo -e "${BLUE}Testing cv2...${RESET}"
-python3 -c "import cv2; print('cv2 works:', cv2.__version__)"
+"$PYTHON_BIN" -c "import cv2; print('cv2 works:', cv2.__version__)"
 
 # --- Run E2E test ---
 echo -e "${BLUE}Running end-to-end test...${RESET}"
 mkdir -p test_images/tiles test_images/upscaled
 
 # Generate test image
-python3 -c "
+"$PYTHON_BIN" -c "
 import cv2
 import numpy as np
 img = np.full((256,256,3), (0,0,255), np.uint8)
@@ -75,7 +98,7 @@ for i in {0..15}; do
 done
 
 # Stitch tiles with flexible parameters
-python3 scripts/stitch.py test_images/upscaled test_images/final_output.jpg --rows 4 --cols 4 --pattern "tile_*.jpg"
+"$PYTHON_BIN" scripts/stitch.py test_images/upscaled test_images/final_output.jpg --rows 4 --cols 4 --pattern "tile_*.jpg"
 
 # Verify output
 if [ -f test_images/final_output.jpg ]; then

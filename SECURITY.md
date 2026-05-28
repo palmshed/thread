@@ -1,36 +1,29 @@
-# Security Policy
+# Security
 
-## Supported Versions
+Thread is early software.
 
-We actively support the following versions with security updates:
+Security fixes are handled for the current `0.1.x` line.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.x.x   | :white_check_mark: |
+<br>
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in hybrid-compute, please report it to us as follows:
+Please do not post exploit details in a public issue.
 
-1. **Do not create a public issue** - This could put users at risk.
-2. Email the maintainers at [bniladridas@gmail.com](mailto:bniladridas@gmail.com) with details of the vulnerability.
-3. Include:
-   - A clear description of the vulnerability
-   - Steps to reproduce
-   - Potential impact
-   - Suggested fix (if any)
+Use GitHub private vulnerability reporting if it is available for this repository.
 
-We will acknowledge receipt within 48 hours and provide a timeline for fixing the vulnerability.
+If that is not available, open a short public issue asking for a private security contact path. Do not include the details there.
 
-## Security Measures
+When reporting, include what happened, how to reproduce it, and what impact you expect.
 
-- Automated dependency scanning with Trivy
-- CodeQL security analysis in CI
-- Regular dependency updates via Dependabot
-- BSD 3-Clause license for transparency
+<br>
 
-Thank you for helping keep hybrid-compute secure!
+## Checks
 
----
+The repo has dependency and code scanning in CI.
 
-© 2026 bniladridas; BSD 3-Clause license, see [LICENSE](LICENSE)
+Security checks can miss things, so small clear reports are useful.
+
+<br>
+
+BSD 3-Clause. See [LICENSE](LICENSE).

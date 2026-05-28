@@ -6,7 +6,7 @@ include(CMakeFindDependencyMacro)
 find_dependency(OpenCV REQUIRED)
 
 # Include the exported targets file
-include("${CMAKE_CURRENT_LIST_DIR}/hybrid-compute-targets.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/thread-targets.cmake")
 
 # Add any additional configuration options here
-set(HYBRID_COMPUTE_FOUND TRUE)
+set(THREAD_FOUND TRUE)

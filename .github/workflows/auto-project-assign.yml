@@ -1,31 +1,28 @@
 ---
-name: Auto Assign to Project
+name: Project Assignment
 
 on:
-  pull_request:
-    types: [opened, reopened]
-  issues:
-    types: [opened, reopened]
+  workflow_dispatch:
+    inputs:
+      item_url:
+        description: 'Issue or pull request URL to add to the project'
+        required: true
+        type: string
 
 jobs:
-  assign-to-project:
+  assign:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      issues: write
-      pull-requests: write
 
     steps:
       - name: Add to Project
-        if: github.event_name == 'pull_request' || github.event_name == 'issues'
-        uses: actions/add-to-project@v2.0.0
-        with:
-          project-url: https://github.com/users/bniladridas/projects/14
-          github-token: ${{ secrets.PAT_TOKEN }}
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+          ITEM_URL: ${{ inputs.item_url }}
+        run: gh project item-add 14 --owner bniladridas --url "$ITEM_URL"
 
       - name: Log Assignment
-        if: github.event_name == 'pull_request' || github.event_name == 'issues'
         run: |
-          item_num="${{ github.event.pull_request.number || github.event.issue.number }}"
-          echo "[INFO] Added #$item_num to Forge project"
+          echo "[INFO] Manual project assignment requested for ${{ inputs.item_url }}"
           echo "[INFO] Project: https://github.com/users/bniladridas/projects/14"

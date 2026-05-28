@@ -21,12 +21,12 @@
 ### Initial Import Test (Failed)
 
 ```
-$ cd /Users/niladri/Desktop/hybrid-compute && python -c "from api.server import app; print('Import OK')" 2>&1
+$ cd /Users/niladri/Desktop/thread && python -c "from api.server import app; print('Import OK')" 2>&1
 Traceback (most recent call last):
   File "<string>", line 1, in <module>
     from api.server import app; print('Import OK')
     ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/niladri/Desktop/hybrid-compute/api/server.py", line 6, in <module>
+  File "/Users/niladri/Desktop/thread/api/server.py", line 6, in <module>
     from flask import Flask, request, jsonify, send_file
   File "/opt/homebrew/lib/python3.14/site-packages/flask/__init__.py", line 14, in <module>
     from jinja2 import escape
@@ -94,7 +94,7 @@ Import OK
 ### Health Check + List Images
 
 ```
-$ cd /Users/niladri/Desktop/hybrid-compute && /Users/niladri/latex-gen/venv_test/bin/python -c "
+$ cd /Users/niladri/Desktop/thread && /Users/niladri/latex-gen/venv_test/bin/python -c "
 from api.server import app
 import threading
 import time
@@ -129,7 +129,7 @@ Response: {'_embedded': {'images': []}, '_links': {'self': {'href': '/v1/images?
 ### Upload Image
 
 ```
-$ cd /Users/niladri/Desktop/hybrid-compute && /Users/niladri/latex-gen/venv_test/bin/python -c "
+$ cd /Users/niladri/Desktop/thread && /Users/niladri/latex-gen/venv_test/bin/python -c "
 from api.server import app
 import threading
 import time

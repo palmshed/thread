@@ -1,5 +1,5 @@
 ---
-name: Deploy to GitHub Pages
+name: Pages
 
 on:
   push:
@@ -36,6 +36,6 @@ jobs:
         with:
           path: 'docs/web'
 
-      - name: Deploy to GitHub Pages
+      - name: Pages
         id: deployment
         uses: actions/deploy-pages@v5

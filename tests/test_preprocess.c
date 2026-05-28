@@ -14,6 +14,8 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
 
 int count_files_in_dir(const char *dir_path) {
 #ifdef _WIN32
@@ -50,11 +52,17 @@ int main() {
   int ret;
   ret = system("mkdir -p test_images");
   (void)ret;
-  ret = system("python3 ../create_test_image.py");
-  (void)ret;
 
-   // Run preprocess_c (in bin directory)
-   ret = system("./bin/preprocess_c test_images test_output_tiles");
+  unsigned char image[256 * 256 * 3];
+  for (int i = 0; i < 256 * 256; ++i) {
+    image[i * 3] = 0;
+    image[i * 3 + 1] = 0;
+    image[i * 3 + 2] = 255;
+  }
+  assert(stbi_write_jpg("test_images/test.jpg", 256, 256, 3, image, 90) != 0);
+
+  // Run preprocess_c (in bin directory)
+  ret = system("./bin/preprocess_c test_images test_output_tiles");
   (void)ret;
 
   // Check if output directory exists

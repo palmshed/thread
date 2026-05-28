@@ -1,6 +1,6 @@
-# Contributing to Hybrid-Compute
+# Contributing to Thread
 
-Thank you for your interest in contributing to hybrid-compute! We welcome contributions from the community.
+Thank you for your interest in contributing to thread! We welcome contributions from the community.
 
 ## Code of Conduct
 
@@ -72,7 +72,7 @@ Use GitHub issues for bugs, features, or questions. Provide:
 
 By contributing, you agree to license your work under the BSD 3-Clause license.
 
-Thank you for contributing to hybrid-compute!
+Thank you for contributing to thread!
 
 ---
 

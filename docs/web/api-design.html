@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Design Guide - Hybrid Compute</title>
+    <title>API Design Guide - Thread</title>
     <style>
         :root {
             --text: #111;
@@ -71,7 +71,7 @@
 <body>
     <nav>
         <div class="container">
-            <a href="index.html" class="nav-brand">Hybrid Compute</a>
+            <a href="index.html" class="nav-brand">Thread</a>
             <div class="nav-links">
                 <a href="testing.html">Testing</a>
                 <a href="test-results.html">Test Results</a>
@@ -85,7 +85,7 @@
     <main>
         <div class="container">
             <h1>API Design Guide</h1>
-            <p class="version">Version 1.0.0 · Published 2026 Feb 19</p>
+            <p class="version">Version 0.1.0 · Published 2026 Feb 19</p>
 
             <h2>Purpose</h2>
             <p>Standards and best practices for REST API components within this project.</p>
@@ -126,7 +126,7 @@
             <h2>Versioning</h2>
             <p>Two methods supported:</p>
             <pre>GET /images/4
-Accept: application/vnd.hybrid-compute.v1+json</pre>
+Accept: application/vnd.thread.v1+json</pre>
             <p>Or in URI:</p>
             <pre>GET /v1/images/4</pre>
             <p>Format: Major.Minor (x.y). Change Major for multiple breaking changes, Minor for 1+ breaking changes.</p>
@@ -231,14 +231,13 @@ Accept: application/vnd.hybrid-compute.v1+json</pre>
     <footer>
         <div class="container">
             <p style="display: flex; align-items: center; gap: 8px;">
-                <img src="startup/avatar.png" alt="libnudget" style="width: 20px; height: 20px; border-radius: 4px;">
-                BSD 3-Clause License · <a href="https://github.com/libnudget" style="color: var(--text-muted); text-decoration: none;">libnudget</a>
+                BSD 3-Clause License
             </p>
             <div>
-                <a href="https://github.com/bniladridas/hybrid-compute/discussions">Discussions</a>
+                <a href="https://github.com/bniladridas/thread/discussions">Discussions</a>
                 <a href="privacy.html">Privacy</a>
                 <a href="terms.html">Terms</a>
-                <a href="https://github.com/bniladridas/hybrid-compute">GitHub</a>
+                <a href="https://github.com/bniladridas/thread">GitHub</a>
             </div>
         </div>
     </footer>

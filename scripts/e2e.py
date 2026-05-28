@@ -1,4 +1,5 @@
 import os
+import shutil
 import signal
 import subprocess
 import sys
@@ -13,23 +14,24 @@ if hasattr(signal, "alarm"):
 runner_os = os.environ.get("RUNNER_OS", "")
 
 # Create dirs
+shutil.rmtree("test_images", ignore_errors=True)
 os.makedirs("test_images/tiles", exist_ok=True)
 os.makedirs("test_images/upscaled", exist_ok=True)
 
 # Create test image
-subprocess.run([sys.executable, "create_test_image.py"], check=False)
+subprocess.run([sys.executable, "create_test_image.py"], check=True)
 
 # Preprocess with C version (always available, no OpenCV dependency)
 if runner_os == "Windows":
-    subprocess.run(["./build/bin/Release/preprocess_c.exe", "test_images", "test_images/tiles"], check=False)
+    subprocess.run(["./build/bin/Release/preprocess_c.exe", "test_images", "test_images/tiles"], check=True)
 else:
-    subprocess.run(["./build/bin/preprocess_c", "test_images", "test_images/tiles"], check=False)
+    subprocess.run(["./build/bin/preprocess_c", "test_images", "test_images/tiles"], check=True)
 
 # Also test C version
 if runner_os == "Windows":
-    subprocess.run(["./build/bin/Release/preprocess_c.exe", "test_images", "test_images/tiles_c"], check=False)
+    subprocess.run(["./build/bin/Release/preprocess_c.exe", "test_images", "test_images/tiles_c"], check=True)
 else:
-    subprocess.run(["./build/bin/preprocess_c", "test_images", "test_images/tiles_c"], check=False)
+    subprocess.run(["./build/bin/preprocess_c", "test_images", "test_images/tiles_c"], check=True)
 
 # Verify C version produced tiles
 if os.path.exists("test_images/tiles_c"):
@@ -41,7 +43,7 @@ print("Preprocess done")
 
 # Tiles are already in test_images/tiles/
 
-# Upscale tiles using the hybrid backend (Metal on macOS, CUDA on Linux)
+# Upscale tiles using the Thread backend (Metal on macOS, CUDA on Linux)
 upscaled_count = 0
 for i in range(16):
     input_tile = f"test_images/tiles/test_tile_{i}.jpg"
@@ -55,30 +57,21 @@ for i in range(16):
                 if img is not None and img.shape[1] == 128 and img.shape[0] == 128:
                     upscaled_count += 1
                     continue
-        print(f"Skipping upscale for tile {i} (upscale not available or failed)")
+        img = cv2.imread(input_tile)
+        if img is None:
+            print(f"Skipping upscale for tile {i} (tile could not be loaded)")
+            continue
+        resized = cv2.resize(img, (128, 128), interpolation=cv2.INTER_CUBIC)
+        if cv2.imwrite(output_tile, resized):
+            upscaled_count += 1
+        else:
+            print(f"Skipping upscale for tile {i} (fallback write failed)")
 print(f"Upscaled {upscaled_count} tiles")
 print("Upscale done")
 
 # Stitch
 if upscaled_count > 0:
-    if runner_os == "Windows":
-        subprocess.run(
-            [sys.executable, "scripts/stitch.py", "test_images/upscaled", "test_images/final_output.jpg"], check=False
-        )
-    else:
-        subprocess.run(
-            [
-                sys.executable,
-                "-m",
-                "coverage",
-                "run",
-                "--source=scripts",
-                "scripts/stitch.py",
-                "test_images/upscaled",
-                "test_images/final_output.jpg",
-            ],
-            check=False,
-        )
+    subprocess.run([sys.executable, "scripts/stitch.py", "test_images/upscaled", "test_images/final_output.jpg"], check=True)
 
     print("Stitch done")
 

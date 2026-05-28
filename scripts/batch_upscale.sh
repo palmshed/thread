@@ -34,7 +34,7 @@ echo "Processing tiles from $INPUT_DIR to $OUTPUT_DIR with scale $SCALE"
 echo "Pattern: $PATTERN"
 
 # Use find to get file list and check if any files exist (prevent command injection)
-files=$(find "./$INPUT_DIR" -maxdepth 1 -name "$PATTERN" -type f)
+files=$(find "$INPUT_DIR" -maxdepth 1 -name "$PATTERN" -type f)
 
 if [ -z "$files" ]; then
     echo "Error: No files found matching pattern '$PATTERN' in $INPUT_DIR"
@@ -42,14 +42,14 @@ if [ -z "$files" ]; then
 fi
 
 count=0
-echo "$files" | while IFS= read -r file; do
+while IFS= read -r file; do
     if [ -f "$file" ]; then
         basename=$(basename "$file")
         output_file="$OUTPUT_DIR/$basename"
         echo "Processing: $basename"
         "$UPSCALER" "$file" "$output_file" "$SCALE"
-        ((count++))
+        ((count += 1))
     fi
-done
+done <<< "$files"
 
 echo "Processed $count files"

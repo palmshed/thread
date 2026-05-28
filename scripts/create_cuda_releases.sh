@@ -113,7 +113,7 @@ create_cuda_release() {
 
 **Docker Usage:**
 \`\`\`bash
-docker build -f Dockerfile.cuda -t hybrid-compute-cuda:$cuda_version .
+docker build -f Dockerfile.cuda -t thread-cuda:$cuda_version .
 \`\`\`" || echo "[WARN] Release creation failed or already exists"
         fi
     fi

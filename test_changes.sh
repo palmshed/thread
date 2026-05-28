@@ -1,84 +1,88 @@
 #!/bin/bash
 
-# Integration test script to verify flexible script improvements
-set -e
+set -euo pipefail
 
-echo "Running integration tests for flexible script improvements..."
+PYTHON_BIN="${PYTHON_BIN:-}"
+if [ -z "$PYTHON_BIN" ]; then
+	for candidate in "venv/bin/python" ".venv/bin/python" "python3"; do
+		if command -v "$candidate" >/dev/null 2>&1 && "$candidate" -c "import cv2, numpy" >/dev/null 2>&1; then
+			PYTHON_BIN="$candidate"
+			break
+		fi
+	done
+fi
 
-# Cleanup function
+if [ -z "$PYTHON_BIN" ]; then
+	echo "FAIL: Python with cv2 and numpy is required"
+	exit 1
+fi
+
+ROOT_DIR="$(pwd)"
+TMP_DIR="$(mktemp -d)"
+
 cleanup() {
-    rm -rf test_integration_dir test_output_dir test_tiles
-    echo "Cleaned up test files"
+	rm -rf "$TMP_DIR"
 }
 trap cleanup EXIT
 
-# Test 1: stitch.py argument parsing and functionality
-echo "✓ Testing stitch.py flexible parameters:"
-mkdir -p test_tiles
-# Create dummy tile images (using ImageMagick if available, otherwise skip)
-if command -v convert >/dev/null 2>&1; then
-    for i in {0..3}; do
-        convert -size 100x100 xc:red "test_tiles/tile_$i.jpg"
-    done
+pass() {
+	echo "PASS: $1"
+}
 
-    # Test with custom parameters
-    if python3 scripts/stitch.py test_tiles test_output.jpg --rows 2 --cols 2 --pattern "tile_*.jpg" 2>/dev/null; then
-        if [ -f test_output.jpg ]; then
-            echo "  ✓ stitch.py successfully created output with custom parameters"
-            rm test_output.jpg
-        else
-            echo "  ✗ stitch.py failed to create output file"
-        fi
-    else
-        echo "  ⚠ stitch.py test skipped (missing cv2 dependency)"
-    fi
-    rm -rf test_tiles
-else
-    echo "  ⚠ stitch.py test skipped (missing ImageMagick)"
+fail() {
+	echo "FAIL: $1"
+	exit 1
+}
+
+mkdir -p "$TMP_DIR/tiles" "$TMP_DIR/out"
+
+"$PYTHON_BIN" - <<PY
+from pathlib import Path
+
+import cv2
+import numpy as np
+
+tile_dir = Path("$TMP_DIR/tiles")
+for index in range(4):
+    image = np.full((32, 32, 3), (0, 0, 255), dtype=np.uint8)
+    ok = cv2.imwrite(str(tile_dir / f"tile_{index}.jpg"), image)
+    if not ok:
+        raise SystemExit("failed to write test tile")
+PY
+
+"$PYTHON_BIN" scripts/stitch.py "$TMP_DIR/tiles" "$TMP_DIR/stitched.jpg" --rows 2 --cols 2 --pattern "tile_*.jpg" >/dev/null
+[ -f "$TMP_DIR/stitched.jpg" ] || fail "stitch.py did not create output"
+pass "stitch.py creates output with explicit grid"
+
+if "$ROOT_DIR/scripts/batch_upscale.sh" "$TMP_DIR/missing" "$TMP_DIR/out" >/dev/null 2>&1; then
+	fail "batch_upscale.sh accepted a missing input directory"
 fi
+pass "batch_upscale.sh rejects missing input directory"
 
-# Test 2: batch_upscale.sh parameter validation
-echo "✓ Testing batch_upscale.sh parameter validation:"
-mkdir -p test_integration_dir
-touch test_integration_dir/test1.jpg test_integration_dir/test2.jpg
-
-# Test with non-existent directory (should fail)
-if ! ./scripts/batch_upscale.sh nonexistent_dir test_output_dir 2>/dev/null; then
-    echo "  ✓ batch_upscale.sh correctly rejects non-existent input directory"
-else
-    echo "  ✗ batch_upscale.sh should have failed with non-existent directory"
+if UPSCALER="$TMP_DIR/no-upscaler" "$ROOT_DIR/scripts/batch_upscale.sh" "$TMP_DIR/tiles" "$TMP_DIR/out" >/dev/null 2>&1; then
+	fail "batch_upscale.sh accepted a missing upscaler"
 fi
+pass "batch_upscale.sh rejects missing upscaler"
 
-# Test with valid directory but no upscaler (should fail gracefully)
-mkdir -p test_output_dir
-if ! ./scripts/batch_upscale.sh test_integration_dir test_output_dir 2>/dev/null; then
-    echo "  ✓ batch_upscale.sh correctly handles missing upscaler binary"
-else
-    echo "  ✗ batch_upscale.sh should have failed with missing upscaler"
+cat > "$TMP_DIR/fake-upscaler" <<'SH'
+#!/bin/bash
+set -euo pipefail
+cp "$1" "$2"
+SH
+chmod +x "$TMP_DIR/fake-upscaler"
+
+UPSCALER="$TMP_DIR/fake-upscaler" "$ROOT_DIR/scripts/batch_upscale.sh" "$TMP_DIR/tiles" "$TMP_DIR/out" 2 >/dev/null
+[ -f "$TMP_DIR/out/tile_0.jpg" ] || fail "batch_upscale.sh did not create output with fake upscaler"
+pass "batch_upscale.sh processes files with an upscaler"
+
+if CLOUD_IP="invalid;command" LOCAL_TILES_DIR="$TMP_DIR/tiles" "$ROOT_DIR/scripts/transfer_tiles.sh" >/dev/null 2>&1; then
+	fail "transfer_tiles.sh accepted unsafe CLOUD_IP"
 fi
+pass "transfer_tiles.sh rejects unsafe CLOUD_IP"
 
-# Test 3: transfer_tiles.sh environment variable validation
-echo "✓ Testing transfer_tiles.sh environment validation:"
-
-# Test with invalid CLOUD_IP (should fail)
-if ! CLOUD_IP="invalid;command" ./scripts/transfer_tiles.sh 2>/dev/null; then
-    echo "  ✓ transfer_tiles.sh correctly rejects dangerous characters in CLOUD_IP"
-else
-    echo "  ✗ transfer_tiles.sh should have rejected dangerous characters"
+if CLOUD_IP="192.168.1.1" LOCAL_TILES_DIR="$TMP_DIR/missing" "$ROOT_DIR/scripts/transfer_tiles.sh" >/dev/null 2>&1; then
+	fail "transfer_tiles.sh accepted a missing local tile directory"
 fi
+pass "transfer_tiles.sh rejects missing local tile directory"
 
-# Test with missing local directory (should fail)
-if ! CLOUD_IP="192.168.1.1" LOCAL_TILES_DIR="nonexistent" ./scripts/transfer_tiles.sh 2>/dev/null; then
-    echo "  ✓ transfer_tiles.sh correctly rejects non-existent local directory"
-else
-    echo "  ✗ transfer_tiles.sh should have failed with non-existent directory"
-fi
-
-echo ""
-echo "✓ Integration tests completed!"
-echo ""
-echo "Key improvements verified:"
-echo "  - stitch.py: Supports flexible grid dimensions and patterns"
-echo "  - batch_upscale.sh: Validates inputs and handles missing files gracefully"
-echo "  - transfer_tiles.sh: Prevents command injection and validates directories"
-echo "  - All scripts now handle edge cases and provide meaningful error messages"
+echo "PASS: script checks completed"

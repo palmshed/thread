@@ -1,5 +1,5 @@
 ---
-name: Release Validation
+name: Release Check
 
 on:
   pull_request:
@@ -27,7 +27,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  validate-release-config:
+  release-check:
     runs-on: ubuntu-latest
     permissions:
       contents: read

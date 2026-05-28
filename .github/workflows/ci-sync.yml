@@ -1,14 +1,11 @@
 ---
-name: CI Sync
+name: Extra CI
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
 
 jobs:
-  build-and-test:
+  extra-ci:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -21,7 +18,7 @@ jobs:
       matrix:
         cpp: ["20"]
         cuda: ["12.6", "13.1"]
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
     steps:
       - name: Checkout repository

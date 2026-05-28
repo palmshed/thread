@@ -1,5 +1,5 @@
 ---
-site_name: Hybrid Compute
+site_name: Thread
 nav:
   - Home: index.md
   - Onboarding: ONBOARDING.md

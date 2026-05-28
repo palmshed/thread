@@ -1,6 +1,6 @@
 # Troubleshooting Guide
 
-This guide provides solutions to common issues encountered when building and testing the Hybrid Compute project.
+This guide provides solutions to common issues encountered when building and testing the Thread project.
 
 ## Common Issues and Solutions
 

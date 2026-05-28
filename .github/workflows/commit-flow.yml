@@ -1,16 +1,11 @@
 ---
-name: Commit Flow Alignment
+name: Commit Check
 
 on:
-  push:
-    branches:
-      - main
-  schedule:
-    - cron: '0 3 * * *'
   workflow_dispatch:
 
 jobs:
-  align-flow:
+  commit-check:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -26,7 +21,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Analyze Flow
+      - name: Check commits
         id: flow
         run: |
           echo "[INFO] Analyzing commit flow..."
@@ -49,7 +44,7 @@ jobs:
 
           echo "[INFO] Flow score: $score% ($aligned/$total aligned)"
 
-      - name: Flow Report
+      - name: Report
         run: |
           score=${{ steps.flow.outputs.score }}
           aligned=${{ steps.flow.outputs.aligned }}
@@ -78,7 +73,7 @@ jobs:
           *Maintains persistent clarity through structured commits*
           EOF
 
-      - name: Gentle Correction
+      - name: Open issue
         if: steps.flow.outputs.score < 40
         run: |
           echo "[INFO] Applying gentle flow correction..."
@@ -94,7 +89,7 @@ jobs:
           git add .github/FLOW.md
           git commit -m "docs(flow): maintain alignment patterns" || true
 
-      - name: Verify Persistence
+      - name: Check state
         run: |
           if [ -f "scripts/commit-msg" ] && [ -x "scripts/commit-msg" ]; then
             echo "[PASS] Flow validation active"
