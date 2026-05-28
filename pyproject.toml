@@ -3,7 +3,9 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "hybrid-compute"
+name = "thread"
+dynamic = ["version"]
+requires-python = ">=3.10"
 dependencies = [
     "opencv-python",
     "numpy",
@@ -20,7 +22,7 @@ line_length = 127
 
 [tool.ruff]
 line-length = 127
-target-version = "py39"
+target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "C90", "I", "N", "UP", "YTT", "S", "BLE", "FBT", "B", "A", "COM", "C4", "DTZ", "T10", "DJ", "EM", "EXE", "FA", "ISC", "ICN", "G", "INP", "PIE", "T20", "PYI", "PT", "Q", "RSE", "RET", "SLF", "SLOT", "SIM", "TID", "TCH", "INT", "ARG", "PTH", "ERA", "PD", "PGH", "PL", "TRY", "FLY", "NPY", "AIR", "PERF", "RUF"]
@@ -32,8 +34,8 @@ indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
 
-[tool.pytest.ini_options]
-pythonpath = "."
+[tool.setuptools.dynamic]
+version = { file = "VERSION" }
 
 [tool.coverage.run]
 omit = ["scripts/e2e.py", "create_test_image.py", "config.py", "config-3.py"]

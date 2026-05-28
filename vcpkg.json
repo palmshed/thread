@@ -1,5 +1,5 @@
 {
-  "name": "hybrid-compute",
+  "name": "thread",
   "version-string": "0.1.0",
   "builtin-baseline": "f7423ee180c4b7f4c4bde78b8f577f7f7119f48c",
   "dependencies": [

@@ -1,9 +1,7 @@
 ---
-name: Automated Maintenance
+name: Maintenance
 
 on:
-  schedule:
-    - cron: '0 4 * * *'  # Daily at 4 AM
   workflow_dispatch:
 
 jobs:
@@ -50,7 +48,7 @@ jobs:
             echo "No changes to commit"
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
-            git commit -m "chore(maintenance): automated update $(date +%Y%m%d)"
+            git commit -m "chore(maintenance): update timestamp $(date +%Y%m%d)"
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
@@ -65,7 +63,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          pr_title="chore(maintenance): automated update"
+          pr_title="chore(maintenance): update timestamp"
           pr_body=$'This PR updates `.github/MAINTENANCE.yml`'
           pr_body+=$' with the latest maintenance timestamp.\n\n'
           pr_body+=$'It is opened by the scheduled maintenance workflow'

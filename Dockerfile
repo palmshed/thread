@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright (c) 2026, bniladridas. All rights reserved.
 
-# Dockerfile for hybrid-compute (local CPU components)
+# Dockerfile for thread (local CPU components)
 FROM ubuntu:26.04 AS builder
 
 # Avoid interactive prompts

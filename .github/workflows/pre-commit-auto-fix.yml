@@ -1,56 +1,38 @@
 ---
-name: Auto-fix pre-commit
+name: Pre-commit Fix
 
 on:
-  pull_request:
-    branches: [main]
   issue_comment:
     types: [created]
-  workflow_dispatch:
 
 jobs:
-  pre-commit-fix:
+  pre-commit:
     runs-on: ubuntu-24.04
     permissions:
       contents: write
       pull-requests: write
-    if: github.event_name == 'workflow_dispatch' ||
-        (github.event_name == 'issue_comment' &&
-         github.event.issue.pull_request != '' &&
-         contains(github.event.comment.body, '/fix') &&
+    if: github.event_name == 'issue_comment' &&
+        github.event.issue.pull_request != '' &&
+         contains(github.event.comment.body, '/fix-precommit') &&
          (github.event.comment.author_association == 'OWNER' ||
           github.event.comment.author_association == 'MEMBER' ||
-          github.event.comment.author_association == 'COLLABORATOR')) ||
-        github.event_name == 'pull_request'
+          github.event.comment.author_association == 'COLLABORATOR')
     steps:
       - name: Get PR branch
         id: pr-info
         env:
           EVENT_NAME: ${{ github.event_name }}
           ISSUE_URL: ${{ github.event.comment.issue_url }}
-          PR_HEAD_REF: ${{ github.head_ref }}
-          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ "$EVENT_NAME" = "issue_comment" ]; then
-            PR_NUM="$(echo "$ISSUE_URL" | grep -oP '\d+$')"
-            # Retrieve both the branch name and immutable head commit SHA for the PR
-            BRANCH="$(gh pr view "$PR_NUM" --json headRefName -q '.headRefName')"
-            SHA="$(gh pr view "$PR_NUM" --json headRefOid -q '.headRefOid')"
-            {
-              echo "branch=$BRANCH"
-              echo "sha=$SHA"
-              echo "pr_num=$PR_NUM"
-            } >> "$GITHUB_OUTPUT"
-          else
-            # For pull_request events, use the immutable head SHA directly
-            {
-              echo "branch=$PR_HEAD_REF"
-              echo "sha=$PR_HEAD_SHA"
-              echo "pr_num=$PR_NUMBER"
-            } >> "$GITHUB_OUTPUT"
-          fi
+          PR_NUM="$(echo "$ISSUE_URL" | grep -oP '\d+$')"
+          BRANCH="$(gh pr view "$PR_NUM" --json headRefName -q '.headRefName')"
+          SHA="$(gh pr view "$PR_NUM" --json headRefOid -q '.headRefOid')"
+          {
+            echo "branch=$BRANCH"
+            echo "sha=$SHA"
+            echo "pr_num=$PR_NUM"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -61,7 +43,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
       - name: Install pre-commit
         run: pip install pre-commit

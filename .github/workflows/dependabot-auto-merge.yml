@@ -1,32 +1,35 @@
 ---
-name: Dependabot Auto-Merge
+name: Dependabot Merge
 
 on:
-  pull_request_target:
-    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Dependabot pull request number to enable auto-merge for'
+        required: true
+        type: string
 
 jobs:
-  dependabot-auto-merge:
+  dependabot-merge:
     permissions:
       contents: read
       pull-requests: write
     runs-on: ubuntu-24.04
-    if: github.actor == 'dependabot[bot]'
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Wait for CI checks to pass
-        uses: lewagon/wait-on-check-action@v1.7.0
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          check-regexp: >-
-            ^(build-and-test|codeql|lint-and-polish|python-tests|coverage|docker|build-cuda|build-metal).*
-          wait-interval: 30
-          repo-token: ${{ secrets.DEPENDABOT_MERGE_TOKEN }}
-          allowed-conclusions: success,skipped
-
-      - name: Enable auto-merge for Dependabot PRs
+      - name: Validate PR author
+        id: pr
         env:
           GH_TOKEN: ${{ secrets.DEPENDABOT_MERGE_TOKEN }}
-        run: gh pr merge ${{ github.event.pull_request.number }} --auto --squash
+          PR_NUMBER: ${{ inputs.pr_number }}
+        run: |
+          author="$(gh pr view "$PR_NUMBER" --json author --jq '.author.login')"
+          if [ "$author" != "dependabot[bot]" ]; then
+            echo "[ERROR] PR #$PR_NUMBER is authored by $author, not dependabot[bot]." >&2
+            exit 1
+          fi
+
+      - name: Enable auto-merge
+        env:
+          GH_TOKEN: ${{ secrets.DEPENDABOT_MERGE_TOKEN }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+        run: gh pr merge "$PR_NUMBER" --auto --squash

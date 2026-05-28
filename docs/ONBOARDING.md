@@ -2,7 +2,7 @@
 
 ## Onboarding Guide
 
-Welcome to the Hybrid Compute project. This guide introduces the architecture, workflow, and platform requirements for contributors and users.
+Welcome to the Thread project. This guide introduces the architecture, workflow, and platform requirements for contributors and users.
 
 ### For New Contributors
 
@@ -12,7 +12,7 @@ Follow the setup instructions in [README.md](../README.md) based on your platfor
 
 #### 2. Architecture Overview
 
-Hybrid Compute consists of:
+Thread consists of:
 
 * **Local CPU Processing**: Image tiling and stitching using C/C++ with OpenCV or stb_image
 * **GPU Acceleration**: CUDA (Linux/Windows) or Metal (macOS) for upscaling operations
@@ -73,7 +73,7 @@ All changes must pass:
 * C/C++: C17 / C++20
 * CUDA: 11.8+
 * Metal: macOS 11.0+
-* Python: 3.9+
+* Python: 3.10+
 
 ### Dependencies
 

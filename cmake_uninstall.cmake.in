@@ -26,7 +26,7 @@ endforeach(file)
 # Remove directories that might be empty after uninstalling
 set(dirs
     "@CMAKE_INSTALL_PREFIX@/include" "@CMAKE_INSTALL_PREFIX@/lib"
-    "@CMAKE_INSTALL_PREFIX@/bin" "@CMAKE_INSTALL_PREFIX@/share/hybrid-compute")
+    "@CMAKE_INSTALL_PREFIX@/bin" "@CMAKE_INSTALL_PREFIX@/share/thread")
 foreach(dir ${dirs})
   if(IS_DIRECTORY "${dir}")
     message(STATUS "Removing directory: ${dir}")

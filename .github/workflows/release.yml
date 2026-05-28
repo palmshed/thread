@@ -18,7 +18,7 @@ on:
         type: boolean
 
 jobs:
-  create-release:
+  release:
     runs-on: ubuntu-latest
     permissions:
       contents: write

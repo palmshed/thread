@@ -44,7 +44,7 @@ gh release create "$TAG_NAME" \
 
 **Docker Usage:**
 \`\`\`bash
-docker build -f Dockerfile.cuda -t hybrid-compute-cuda:$CUDA_VERSION .
+docker build -f Dockerfile.cuda -t thread-cuda:$CUDA_VERSION .
 \`\`\`"
 
 git checkout main

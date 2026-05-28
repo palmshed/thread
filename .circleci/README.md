@@ -1,130 +1,31 @@
 # CircleCI
 
-## CircleCI Status
+CircleCI is kept for platform jobs that do not need to run on every local change.
 
-| Component | Status | Details |
-|-----------|--------|---------|
-| Config validation | ✓ | YAML valid, orbs resolved |
-| Multi-platform builds | ✓ | Linux CUDA, macOS Metal, Windows |
-| Python matrix | ✓ | 3.9-3.12 testing |
-| GPU resource allocation | ✓ | CUDA architectures 75;80;86 |
-| Container builds | ✓ | CPU/GPU Docker images |
-| Security scanning | ✓ | Trivy vulnerability checks |
-| Benchmark execution | ✓ | Metal shim performance tests |
-| Release automation | ✓ | Release-please integration |
+The main repo checks live in GitHub Actions. CircleCI should stay quiet unless a job really needs it.
 
-## Workflows
+## Required Secrets
 
-### ci
-Triggers: push/PR to main
-- Code quality
-- Python 3.9-3.12 matrix
-- Linux CUDA/macOS Metal/Windows builds
-- Coverage + security scans
-- Docker CPU/GPU builds
-- Release automation
-
-### nightly
-Triggers: daily 02:00 UTC
-- Full test suite
-- Extended benchmarks
-- Security scans
-
-## Environment Variables
-
-Required environment variables in CircleCI project settings:
+Set these in the CircleCI project if Docker or coverage jobs are enabled:
 
 ```bash
-GITHUB_TOKEN=<github_personal_access_token>
-DOCKERHUB_USERNAME=<your_dockerhub_username>
-DOCKERHUB_PASSWORD=<your_dockerhub_password_or_token>
-CODECOV_TOKEN=<codecov_project_token>
+DOCKERHUB_USERNAME=<dockerhub-user>
+DOCKERHUB_PASSWORD=<dockerhub-token>
+CODECOV_TOKEN=<codecov-token>
 ```
 
-### Docker Hub Setup
+## Validate The Config
 
-1. **Create Docker Hub account** at https://hub.docker.com
-2. **Generate access token** (recommended over password):
-   - Go to Account Settings → Security → Access Tokens
-   - Create new token with Read/Write permissions
-3. **Add to CircleCI**:
-   - Project Settings → Environment Variables
-   - Add `DOCKERHUB_USERNAME` with your Docker Hub username
-   - Add `DOCKERHUB_PASSWORD` with your access token
-4. **Update image namespace**:
-   - Replace `yourusername` in the config with your actual Docker Hub username
-   - Or set `DOCKERHUB_USERNAME` environment variable
-
-## Executors
-
-| Executor | Image | Resources |
-|----------|-------|-----------|
-| ubuntu-cuda | nvidia/cuda:13.1.1-devel-ubuntu22.04 | gpu.nvidia.small |
-| ubuntu-cpu | ubuntu:24.04 | large |
-| macos-metal | Xcode 15.0 | macos.m1.medium.gen1 |
-| windows-cuda | Windows Server 2022 | windows.medium |
-
-## Validation
-
-Validate the CircleCI configuration:
+Install the CircleCI CLI, then run:
 
 ```bash
-# Install CircleCI CLI (if not installed)
-curl -fLSs https://raw.githubusercontent.com/CircleCI-Public/circleci-cli/master/install.sh | bash
-
-# Validate configuration
 circleci config validate .circleci/config.yml
 ```
 
-## Dependencies
+The local helper does the same check when the CLI is installed:
 
-```
-code-quality
-├── python-tests
-├── build-linux-cuda
-├── build-linux-cpu
-├── build-macos-metal
-└── build-windows-cuda
-    ├── code-coverage
-    └── benchmark
-        ├── docker-build
-        └── security-scan
-            └── release
-```
-
-## Codecov Integration
-
-Both CI systems use identical Codecov v5 setup:
-
-| CI System | Method | Token |
-|-----------|--------|-------|
-| GitHub Actions | `codecov-action@v5` | `${{ secrets.CODECOV_TOKEN }}` |
-| CircleCI | `npx codecov@5` | `$CODECOV_TOKEN` |
-
-## Artifacts
-
-- Test results (JUnit)
-- Coverage reports (Codecov)
-- Build binaries
-- Security scans (SARIF)
-- Benchmarks
-
-## Customization
-
-### Python Versions
-```yaml
-python-tests:
-  matrix:
-    parameters:
-      python-version: ["3.9", "3.10", "3.11", "3.12"]
-```
-
-### CUDA Architectures
 ```bash
--DCMAKE_CUDA_ARCHITECTURES=75;80;86
+bash scripts/validate-circleci.sh
 ```
 
-### New Platforms
-1. Add executor
-2. Create build job
-3. Update workflow
+If the CLI is missing locally, the helper prints a warning and exits cleanly. In CI, missing validation tooling should fail.

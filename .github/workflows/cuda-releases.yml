@@ -1,12 +1,7 @@
 ---
-name: Auto CUDA Releases
+name: CUDA Releases
 
 on:
-  push:
-    paths:
-      - 'Dockerfile.cuda'
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       dry_run:
@@ -14,11 +9,9 @@ on:
         required: false
         default: false
         type: boolean
-  schedule:
-    - cron: '0 2 * * *'  # Daily at 2 AM UTC
 
 jobs:
-  create-cuda-releases:
+  cuda-releases:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -39,13 +32,13 @@ jobs:
         run: |
           gh --version
 
-      - name: Auto-scan and create missing releases
+      - name: Check CUDA releases
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
           MIN_CUDA_VERSION: '12.0.0'
         run: |
-          echo "[INFO] Auto-scanning for missing CUDA version releases..."
+          echo "[INFO] Checking CUDA version releases..."
           ./scripts/create_cuda_releases.sh
 
       - name: Summary

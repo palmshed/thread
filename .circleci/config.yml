@@ -2,7 +2,7 @@
 version: 2.1
 
 # ────────────────────────────────────────────────────────────────────────────────
-# CircleCI Configuration for Hybrid Compute
+# CircleCI configuration for Thread
 # ────────────────────────────────────────────────────────────────────────────────
 
 orbs:
@@ -208,7 +208,7 @@ commands:
             # Install required tools
             choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y --no-progress;
             choco install opencv --version=4.5.5 -y --no-progress;
-            choco install python --version=3.10.0 -y --no-progress;
+            choco install python --version=3.12.0 -y --no-progress;
             refreshenv;
 
             # Install Python packages
@@ -801,9 +801,9 @@ jobs:
                 shell: bash
                 command: |
                   # Use DOCKERHUB_USERNAME or fallback to a default namespace
-                  DOCKER_NAMESPACE="${DOCKERHUB_USERNAME:-harpertoken}"
-                  TAG="${DOCKER_NAMESPACE}/hybrid-compute-gpu:${CIRCLE_SHA1}"
-                  LATEST_TAG="${DOCKER_NAMESPACE}/hybrid-compute-gpu:latest"
+                  DOCKER_NAMESPACE="${DOCKERHUB_USERNAME:?DOCKERHUB_USERNAME is required}"
+                  TAG="${DOCKER_NAMESPACE}/thread-gpu:${CIRCLE_SHA1}"
+                  LATEST_TAG="${DOCKER_NAMESPACE}/thread-gpu:latest"
 
                   docker build \
                     -f Dockerfile.cuda \
@@ -825,8 +825,8 @@ jobs:
                 name: Test CUDA container
                 shell: bash
                 command: |
-                  DOCKER_NAMESPACE="${DOCKERHUB_USERNAME:-harpertoken}"
-                  TAG="${DOCKER_NAMESPACE}/hybrid-compute-gpu:${CIRCLE_SHA1}"
+                  DOCKER_NAMESPACE="${DOCKERHUB_USERNAME:?DOCKERHUB_USERNAME is required}"
+                  TAG="${DOCKER_NAMESPACE}/thread-gpu:${CIRCLE_SHA1}"
                   echo "Testing CUDA container structure..."
                   docker run --rm --entrypoint="" $TAG ls -la /app/
                   echo "Testing CUDA upscale binary exists and is executable..."
@@ -843,9 +843,9 @@ jobs:
                 shell: bash
                 command: |
                   # Use DOCKERHUB_USERNAME or fallback to a default namespace
-                  DOCKER_NAMESPACE="${DOCKERHUB_USERNAME:-harpertoken}"
-                  TAG="${DOCKER_NAMESPACE}/hybrid-compute-cpu:${CIRCLE_SHA1}"
-                  LATEST_TAG="${DOCKER_NAMESPACE}/hybrid-compute-cpu:latest"
+                  DOCKER_NAMESPACE="${DOCKERHUB_USERNAME:?DOCKERHUB_USERNAME is required}"
+                  TAG="${DOCKER_NAMESPACE}/thread-cpu:${CIRCLE_SHA1}"
+                  LATEST_TAG="${DOCKER_NAMESPACE}/thread-cpu:latest"
 
                   docker build \
                     -f Dockerfile \
@@ -867,8 +867,8 @@ jobs:
                 name: Test CPU container
                 shell: bash
                 command: |
-                  DOCKER_NAMESPACE="${DOCKERHUB_USERNAME:-harpertoken}"
-                  TAG="${DOCKER_NAMESPACE}/hybrid-compute-cpu:${CIRCLE_SHA1}"
+                  DOCKER_NAMESPACE="${DOCKERHUB_USERNAME:?DOCKERHUB_USERNAME is required}"
+                  TAG="${DOCKER_NAMESPACE}/thread-cpu:${CIRCLE_SHA1}"
                   echo "Testing CPU container structure..."
                   docker run --rm --entrypoint="" $TAG ls -la /app/
                   echo "Testing CPU preprocess binary exists and is executable..."
@@ -902,11 +902,11 @@ jobs:
           name: Scan CUDA image
           shell: bash
           command: |
-            DOCKER_NAMESPACE="${DOCKERHUB_USERNAME:-harpertoken}"
-            if docker image inspect "${DOCKER_NAMESPACE}/hybrid-compute-gpu:${CIRCLE_SHA1}" \
+            DOCKER_NAMESPACE="${DOCKERHUB_USERNAME:?DOCKERHUB_USERNAME is required}"
+            if docker image inspect "${DOCKER_NAMESPACE}/thread-gpu:${CIRCLE_SHA1}" \
                 >/dev/null 2>&1; then
               trivy image --format sarif --output cuda-scan.sarif \
-                "${DOCKER_NAMESPACE}/hybrid-compute-gpu:${CIRCLE_SHA1}"
+                "${DOCKER_NAMESPACE}/thread-gpu:${CIRCLE_SHA1}"
             else
               echo "CUDA image not found, skipping scan"
               echo '{"runs": [{"results": []}]}' > cuda-scan.sarif
@@ -916,11 +916,11 @@ jobs:
           name: Scan CPU image
           shell: bash
           command: |
-            DOCKER_NAMESPACE="${DOCKERHUB_USERNAME:-harpertoken}"
-            if docker image inspect "${DOCKER_NAMESPACE}/hybrid-compute-cpu:${CIRCLE_SHA1}" \
+            DOCKER_NAMESPACE="${DOCKERHUB_USERNAME:?DOCKERHUB_USERNAME is required}"
+            if docker image inspect "${DOCKER_NAMESPACE}/thread-cpu:${CIRCLE_SHA1}" \
                 >/dev/null 2>&1; then
               trivy image --format sarif --output cpu-scan.sarif \
-                "${DOCKER_NAMESPACE}/hybrid-compute-cpu:${CIRCLE_SHA1}"
+                "${DOCKER_NAMESPACE}/thread-cpu:${CIRCLE_SHA1}"
             else
               echo "CPU image not found, skipping scan"
               echo '{"runs": [{"results": []}]}' > cpu-scan.sarif
@@ -951,7 +951,7 @@ workflows:
       - python-tests:
           matrix:
             parameters:
-              python-version: ["3.9", "3.10", "3.11", "3.12"]
+              python-version: ["3.10", "3.11", "3.12"]
           requires:
             - code-quality
 
