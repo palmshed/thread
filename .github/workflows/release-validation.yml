@@ -33,6 +33,6 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Validate release files
         run: ./scripts/validate_release_config.sh
