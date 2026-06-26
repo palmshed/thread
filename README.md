@@ -18,6 +18,14 @@ It has a local API.
 
 <br>
 
+## Stack
+
+`hautofix → vortai → thread → mlapi`
+
+Depends on: vortai, mlapi.
+
+<br>
+
 # What Works Now
 
 | Part | State |
