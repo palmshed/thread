@@ -64,7 +64,7 @@ jobs:
             echo "fix_branch=$fix_branch"
           } >> "$GITHUB_OUTPUT"
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: steps.branches.outputs.skip != 'true'
         with:
           fetch-depth: 0

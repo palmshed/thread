@@ -34,7 +34,7 @@ jobs:
             echo "sha=$SHA"
           } >> "$GITHUB_OUTPUT"
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: ${{ steps.pr-info.outputs.sha }}
           fetch-depth: 0

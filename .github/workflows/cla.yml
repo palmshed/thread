@@ -12,13 +12,13 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           sparse-checkout: |
             signed.json
 
       - name: Checkout private cla-bot
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: bniladridas/cla-bot
           token: ${{ secrets.CLA_BOT_TOKEN }}
